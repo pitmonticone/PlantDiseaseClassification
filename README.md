@@ -1,6 +1,5 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/InPhyT/PlantDiseaseDetection/master)
 [![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)]()
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/InPhyT/PlantDiseaseDetection/blob/master)
 [![nbviewer](https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/InPhyT/PlantDiseaseDetection/)
 
 # Plant Disease Detection 
