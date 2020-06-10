@@ -66,7 +66,14 @@ code span.ot { color: #007020; }
 </div>
 <div id="objectives" class="section level4">
 <h4>Objectives</h4>
-<p>The <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview">Plant Pathology Challenge</a> we have attended consists in training a model using images of the <a href="https://arxiv.org/abs/2004.11958">training dataset</a> to * accurately classify a given image from testing dataset into different diseased category or a healthy leaf; * accurately distinguish between many diseases, sometimes more than one on a single leaf; * deal with rare classes and novel symptoms; * address depth perception—angle, light, shade, physiological age of the leaf; * Incorporate expert knowledge in identification, annotation, quantification, and guiding computer vision to search for relevant features during learning.</p>
+<p>The <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview">Plant Pathology Challenge</a> we have attended consists in training a model using images of the <a href="https://arxiv.org/abs/2004.11958">training dataset</a> to</p>
+<ul>
+<li>accurately classify a given image from testing dataset into different diseased category or a healthy leaf;</li>
+<li>accurately distinguish between many diseases, sometimes more than one on a single leaf;</li>
+<li>deal with rare classes and novel symptoms;</li>
+<li>address depth perception—angle, light, shade, physiological age of the leaf;</li>
+<li>Incorporate expert knowledge in identification, annotation, quantification, and guiding computer vision to search for relevant features during learning.</li>
+</ul>
 <p>Submissions are evaluated on <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation">mean column-wise ROC AUC</a>.</p>
 </div>
 <div id="data" class="section level4">
@@ -78,12 +85,12 @@ code span.ot { color: #007020; }
 <h4>Solution</h4>
 <p>In this project we train a convolutional neural network and apply the following methods</p>
 <ol style="list-style-type: decimal">
-<li>Class balancing with <a href="https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html">SMOTE</a></li>
-<li>Data augmentation with <a href="https://keras.io/api/preprocessing/image/">Keras ImageDataGenerator</a></li>
-<li>Learning rate schedule</li>
-<li>Optimal dropout</li>
-<li>Epoch grid search</li>
-<li>Filters and feature maps visualization of the layers.</li>
+<li>class balancing with <a href="https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html">SMOTE</a></li>
+<li>data augmentation with <a href="https://keras.io/api/preprocessing/image/">Keras ImageDataGenerator</a></li>
+<li>learning rate schedule</li>
+<li>optimal dropout</li>
+<li>epoch grid search</li>
+<li>filters and feature maps visualization of the layers.</li>
 </ol>
 <p>Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.</p>
 </div>
