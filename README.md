@@ -40,8 +40,8 @@ Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned,
 
 #### Results 
 
-* $ROC = 0.956$ applying the Keras pre-trained model [DenseNet121](https://keras.io/api/applications/densenet/#densenet121-function);
-* $ROC = 0.915$ applying a relatively shallow CNN defined and trained from scratch. 
+* ROC = 0.956 applying the Keras pre-trained model [DenseNet121](https://keras.io/api/applications/densenet/#densenet121-function);
+* ROC = 0.915 applying a relatively shallow CNN defined and trained from scratch. 
 
 #### References
 
