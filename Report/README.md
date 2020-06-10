@@ -1,5 +1,6 @@
 # Convolutional Neural Network for Plant Disease Classification 
 
+
 ## Abstract
 
 #### Problem 
@@ -7,6 +8,7 @@ Misdiagnosis of the many diseases impacting agricultural crops can lead to misus
 
 #### Objectives
 The [Plant Pathology Challenge](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview) we have attended consists in training a model using images of the [training dataset](https://arxiv.org/abs/2004.11958) to
+
 * accurately classify a given image from testing dataset into different diseased category or a healthy leaf; 
 * accurately distinguish between many diseases, sometimes more than one on a single leaf;
 * deal with rare classes and novel symptoms;
@@ -23,23 +25,18 @@ We found no indication that "multiple_diseases" refers to both "rust" and "scab"
 
 
 #### Solution 
-In this project we train N convolutional neural networks (*add specific models*)
+In this project we train a convolutional neural network and apply the following methods
 
-1. Class balancing with [SMOTE](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
-1. Data augmentation with [Keras ImageDataGenerator](https://keras.io/api/preprocessing/image/)
-1. Learning rate schedule
-1. Optimal dropout
-1. Epoch grid search
-1. Filters and feature maps visualization of the layers.
+1. class balancing with [SMOTE](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
+1. data augmentation with [Keras ImageDataGenerator](https://keras.io/api/preprocessing/image/)
+1. learning rate schedule
+1. optimal dropout
+1. epoch grid search
+1. filters and feature maps visualization of the layers.
 
-Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned,
+Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.
 
 #### Results 
 
-* $ROC = 0.956$ applying the Keras pre-trained model [DenseNet121](https://keras.io/api/applications/densenet/#densenet121-function);
-* $ROC = 0.915$ applying a relatively shallow CNN defined and trained from scratch. 
-
-#### References
-
-1. Kaggle [Plant Pathology 2020 - FGVC7](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview) 
-1. Ranjita Thapa et al., 2020 [The Plant Pathology 2020 Challenge Dataset to Classify Foliar Disease of Apples](https://arxiv.org/abs/2004.11958), *arXiv*.
+* **ROC = 0.956** applying the Keras pre-trained model [DenseNet121](https://keras.io/api/applications/densenet/#densenet121-function);
+* **ROC = 0.915** applying a CNN which has been defined and trained from scratch. 
