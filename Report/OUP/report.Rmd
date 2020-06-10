@@ -1,5 +1,5 @@
 ---
-title: Deep Learning Algorithm for Plant Disease Detection 
+title: Convolutional Neural Network for Plant Disease Classification 
 date: "`r Sys.Date()`"
 authors:
   - name: Claudio Moroni
@@ -13,9 +13,9 @@ authors:
     address: University of Turin
     #corresponding_author: yes
 abstract: |
-  This is the abstract.
-
-  It consists of two paragraphs.
+  sjssjsjjsjjsjsjs
+  ssss
+  ss
 acknowledgements: |
   This is an acknowledgement.
 
