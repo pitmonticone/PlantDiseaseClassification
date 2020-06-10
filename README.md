@@ -4,7 +4,7 @@
 
 # Convolutional Neural Network for Plant Disease Classification 
 
-* [Report](https://inphyt.github.io/NeuralNetworksProject/blob/master/Report/HTML/report.html)
+* [Report](https://inphyt.github.io/..)
 
 * [Jupyter Notebook]()
 
