@@ -46,7 +46,7 @@ We found no indication that "multiple_diseases" refers to both "rust" and "scab"
 
 
 #### Solution 
-In this project we train a convolutional neural network and apply the following methods
+In this project we have trained a convolutional neural network and apply the following methods
 
 1. class balancing with [SMOTE](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
 1. data augmentation with [Keras ImageDataGenerator](https://keras.io/api/preprocessing/image/)
