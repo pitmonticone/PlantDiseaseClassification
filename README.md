@@ -1,3 +1,5 @@
+![Size](https://img.shields.io/github/repo-size/InPhyT/NeuralNetworksProject)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/InPhyT/PlantDiseaseDetection/master)
 [![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)]()
 [![nbviewer](https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/InPhyT/PlantDiseaseDetection/)
