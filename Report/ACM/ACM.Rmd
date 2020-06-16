@@ -79,6 +79,6 @@ The newest unstable version of TensorFlow with GPU support is needed to run the 
 ![PCA 200](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/PCA200.png)
 
 
-### Convolutional Filters and Features Maps
+### Filters and Features Maps
 
 # References
