@@ -1,6 +1,6 @@
 ---
-title: Convolutional Neural Network for Plant Disease Classification 
-date: "`r Sys.Date()`"
+title: "Convolutional Neural Network for Plant Disease Classification "
+date: "`r format(Sys.time(), '%d %B %Y')`"
 authors:
   - name: Claudio Moroni
     email: claudio.moroni@edu.unito.it
@@ -13,17 +13,11 @@ authors:
     address: University of Turin
     #corresponding_author: yes
 abstract: |
-  sjssjsjjsjjsjsjs
-  ssss
-  ss
-acknowledgements: |
-  This is an acknowledgement.
-
-  It consists of two paragraphs.
+  In this effort we train a CNN model in order to take part in the [Plant Pathology 2020 - FGVC7](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/discussion/141015), an image classification task where we ultimately achieved a categorical roc score of 0.956 using [denseNet121](https://keras.io/api/applications/densenet/#densenet121-function), and 0.915 using a relatively shallow CNN defined and trained from scratch. The train and the test datasets are both composed of 1821 images, showing various leaves which are to be classified in 4 categories: "healthy", "multiple disases", "rust", "scab", where we founfd no indication that "multiple_diseases" refers to both "rust" and "scab", it just seems to indicate the presece of other (different) kinds of illnesses. The metric used is the categorical roc. In the end, we also output a visulization of the filters and activation maps of the layers, and an SVD decomposition of the dataset. The techniques we used during training are balancing classes with SMOTE, data augemntation with Keras ImageDataGenerator, optimal dropout and epoch grid searching. Where possible, also auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.
 keywords:
-  - key
-  - dictionary
-  - word
+  - deep learning
+  - convolutional neural network
+  - image classification
 #fontsize: 12pt
 #spacing: halfline # could also be oneline
 #classoptions:
@@ -41,67 +35,51 @@ knitr::opts_chunk$set(fig.env="figure") # Latex figure environment
 library(xtable) # Creates tables that follow OUP guidelines; other options, such as kable, may also be workable
 ```
 
-# Introduction
+# Model training
 
-This template is based on the generic OUP template available [here](https://academic.oup.com/icesjms/pages/General_Instructions). The original OUP sample tex document, providing more details on prefered formatting for LaTeX documents, is included with the template in the file `ouparticle_sample.tex`.
+The Challenge consisted in classifying leaves images into four categories: HEALTHY, MULTIPLE_DISEASES, RUST, SCAB. Altough a MULTIPLE_DISEASES leaf could be affected both by rust and scab, or by rust and another disease or by scab and another disease, because there is no taxonomy we treated the classes as mutually exclusive. This is to say that in principle the model should distinguish between all four classes, as none of them is an abstraction of (some of) the others. <br>
+The evaluation metric is the [column-wise ROC](#roc).<br>
+We implemented an explicit keras model (EKM in the following), then also a pre-teined model - DenseNet121 - was used. 
+In order to build a more robust model, we tried/implemented the following techniques (in chronological order):
 
-Here are two sample references: @Feynman1963118 [@Dirac1953888]. Bibliography will appear at the end of the document.
+1. Class balancing with SMOTE.
+2. Data augmentation with keras ImageDataGenerator.
+3. Some fine-tuning/exploration of the models' layers and parameters, in particular e dropout layer (EKM only) , Early Stopping (DenseNet121 only), learning rate scheduling ( DenseNet121 only).
+4. An attempt to put a convolutional autoencoder autoencoder between point 2 and point 3.
 
-# Materials and methods
+Secondary information may be found in the [Appendix](#appendix).
 
-An equation with a label for cross-referencing:
+# Class balancing with SMOTE
+`SMOTE(sampling_strategy,k_neighbors)` is a class balancing algorithm that operates as follows: (one of) the minority class(es) is considered, a random point from it is picked and its first `n_neighbors` nearest neighbors are found. One of the latters is then randomly selected, and the the vector between this point and the originally selected point is drawn. This vector gets then multiplied by a number between 0 and 1, and the resulting synthetic point is added to the dataset. <br>
+There exist many variants of **SMOTE**, so besides the standard one also the **SVMSMOTE** and **ADASYN** have been tried. <br>
+**SVMSMOTE** is a variant of **SMOTE** that first of all fits an SVM on the data, and uses its support vectors to identify points more prone to misclassification (i.e. those on the border of the class cluster): these points are later oversampled more than the others.<br>
+**ADASYN** instead draws from a distribution over the minority class(es) that is pointwise inversely proportional to their density. That is, more points are generated where the minority class(es) are sparser, and less points where they are more dense.<br>
+Anyway, the class balancing algorithm that ultimately performed better is baseline **SMOTE**,  with some fine tuning on the `sampling_strategy`( the `all` value means that all classes are resampled to match the size of the majority class), and the `n_neighbors` parameters. See [Platform limitations]()
 
-\begin{equation}\label{eq:eq1}
-\int^{r_2}_0 F(r,\varphi){\rm d}r\,{\rm d}\varphi = [\sigma r_2/(2\mu_0)]
-\int^{\infty}_0\exp(-\lambda|z_j-z_i|)\lambda^{-1}J_1 (\lambda r_2)J_0
-(\lambda r_i\,\lambda {\rm d}\lambda)
-\end{equation}
+# Data augmentation with Keras' ImageDataGenerator
+Click the following link for an introduction to [keras Image preprocessing API](https://keras.io/api/preprocessing/image/). Using Keras' ImageDataGenerator, after a manual inspection of the images, we founfd that the best data augmentin technique consisted in a random planar rotation, mixed with random horizontal flip.
 
-This equation can be referenced as follows: Eq. \ref{eq:eq1}
 
-## A subsection
+# Some fine-tuning/exploration of the models' layers and parameters, in particular e dropout layer (EKM only) , Early Stopping (DenseNet121 only), learning rate scheduling ( DenseNet121 only) and optimizer variations (EKM)
+The explorations reported in the title of this section have been performed. We couldn't implement Early Stopping in the EKM model, as fluctuation in either validation loss, categorical accuracy and row-wose ROC where too high to set proper `min_delta` and `patience` parameters in [TensorFlow's Early Stopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping) implementation. (We also explored some optimizers) *(Visto che l'early stopping di tensorflow non va, usiamo quello manuale già implementato? Quali altri optimizers abbiamo provato? Abbiamo una submission per questi?)*.
+The manual implementations of the dropout and early stopping acted simultaneoulsy, so they performed like a grid search. The dropout and epoch values corresponding to the best column-wise ROC were saved and used during testing phase.
 
-A numbered list:
+# An attempt to put a convolutional autoencoder autoencoder between point 2 and point 3.
+Despite the multiple configurations tried, the best we could get is a $0.7$ column-wise ROC. The reason behind it could be the fact that on one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reduction,s on the other hand even a single bidimensonal maxpooling caused the output image to be too little for last EKM layer to classify. See [Platform limitations](#limitations).
 
-1) First point
-2) Second point
-    - Subpoint
-    
-A bullet list:
+# Appendix {#appendix}
 
-* First point
-* Second point
+## column-wise ROC {#roc}
+From [Challenge Overview](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation) on Kaggle:
+>Submissions are evaluated on mean column-wise ROC AUC. In other words, the score is the average of the individual AUCs of each predicted column
 
-# Results
+## Platform Limitations {#limitations}
+The newest unstable version of TensorFlow with GPU support is needed to run the code. Unfortunately, we haven't been able to set proper kernels up on our local machines, so we had to rely on publicly available cloud interactive environments like [Kaggle](https://www.kaggle.com/), that provided free out of the box kernels for our purposes. The only limitations are in terms of cpu RAM, which forced us to downsize the images to about $200*200$ pixels.
 
-Generate a figure.
+## Visualization
 
-```{r fig1, fig.cap="This is the first figure.",echo=TRUE}
-plot(1:10,main="Some data",xlab="Distance (cm)",ylab="Time (hours)")
-```
+### PCA
 
-You can reference this figure as follows: Fig. \ref{fig:fig1}.
-
-```{r fig2, fig.cap="This is the second figure.",echo=TRUE}
-plot(1:5,pch=19,main="Some data",xlab="Distance (cm)",ylab="Time (hours)")
-```
-
-Reference to second figure: Fig. \ref{fig:fig2}
-
-Generate a table.
-
-```{r tab1, results="asis", echo=TRUE}
-df = data.frame(ID=1:3,code=letters[1:3])
-print(xtable(df,caption="This is the table caption",label="tab:tab1"),
-      comment=FALSE)
-```
-
-You can reference this table as follows: Table \ref{tab:tab1}.
-
-# Discussion
-
-You can cross-reference sections and subsections as follows: Section \ref{materials-and-methods} and Section \ref{a-subsection}.
-
-***Note:*** the last section in the document will be used as the section title for the bibliography.
+### Convolutional Filters and Features Maps
 
 # References

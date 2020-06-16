@@ -14,7 +14,7 @@
 <meta name="author" content="Claudio Moroni | Davide Orsenigo | Pietro Monticone" />
 
 
-<title>Convolutional Neural Network for Plant Disease Classification</title>
+<title>Plant Pathology 2020 - FGVC7</title>
 
 
 
@@ -45,68 +45,79 @@ code span.ot { color: #007020; }
 
 
 <section class="page-header">
-<h1 class="title toc-ignore project-name">Convolutional Neural Network for Plant Disease Classification</h1>
+<h1 class="title toc-ignore project-name">Plant Pathology 2020 - FGVC7</h1>
+<h3 class="subtitle project-tagline">Identify the Category of Foliar Diseases in Apple Trees</h3>
 <h4 class="author project-author"><strong>Claudio Moroni</strong> | <strong>Davide Orsenigo</strong> | <strong>Pietro Monticone</strong></h4>
-<h4 class="date project-date">2020-06-12, <em>University of Turin</em></h4>
+<h4 class="date project-date">16 June 2020, <em>University of Turin</em></h4>
 </section>
 
 
 <div id="TOC" class="toc">
 <ul>
 <li><a href="#abstract"><strong>Abstract</strong></a></li>
+<li><a href="#model-training"><strong>Model training</strong></a></li>
+<li><a href="#class-balancing-with-smote"><strong>Class balancing with <code>SMOTE</code></strong></a></li>
+<li><a href="#data-augmentation-with-keras-imagedatagenerator"><strong>Data augmentation with Keras <code>ImageDataGenerator</code></strong></a></li>
+<li><a href="#some-fine-tuningexploration-of-the-models-layers-and-parameters-in-particular-e-dropout-layer-ekm-only-early-stopping-densenet121-only-learning-rate-scheduling-densenet121-only-and-optimizer-variations-ekm"><strong>Some fine-tuning/exploration of the models’ layers and parameters, in particular e dropout layer (EKM only) , Early Stopping (DenseNet121 only), learning rate scheduling ( DenseNet121 only) and optimizer variations (EKM)</strong></a></li>
+<li><a href="#an-attempt-to-put-a-convolutional-autoencoder-autoencoder-between-point-2-and-point-3."><strong>An attempt to put a convolutional autoencoder autoencoder between point 2 and point 3.</strong></a></li>
+<li><a href="#appendix"><strong>Appendix</strong></a><ul>
+<li><a href="#roc">column-wise ROC</a></li>
+<li><a href="#limitations">Platform Limitations</a></li>
+<li><a href="#visualization">Visualization</a></li>
+</ul></li>
 </ul>
 </div>
 
 <section class="main-content">
-<div id="abstract" class="section level2">
-<h2><strong>Abstract</strong></h2>
-<div id="problem" class="section level4">
-<h4>Problem</h4>
-<p>Misdiagnosis of the many diseases impacting agricultural crops can lead to misuse of chemicals leading to the emergence of resistant pathogen strains, increased input costs, and more outbreaks with significant economic loss and environmental impacts. Current disease diagnosis based on human scouting is time-consuming and expensive, and although computer-vision based models have the promise to increase efficiency, the great variance in symptoms due to age of infected tissues, genetic variations, and light conditions within trees decreases the accuracy of detection.</p>
+<div id="abstract" class="section level1 unnumbered">
+<h1><strong>Abstract</strong></h1>
+<p>In this effort we train a CNN model in order to take part in the <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/discussion/141015">Plant Pathology 2020 - FGVC7</a>, an image classification task where we ultimately achieved a categorical roc score of 0.956 using <a href="https://keras.io/api/applications/densenet/#densenet121-function">denseNet121</a>, and 0.915 using a relatively shallow CNN defined and trained from scratch. The train and the test datasets are both composed of 1821 images, showing various leaves which are to be classified in 4 categories: “healthy”, “multiple disases”, “rust”, “scab”, where we founfd no indication that “multiple_diseases” refers to both “rust” and “scab”, it just seems to indicate the presece of other (different) kinds of illnesses. The metric used is the categorical roc. In the end, we also output a visulization of the filters and activation maps of the layers, and an SVD decomposition of the dataset. The techniques we used during training are balancing classes with SMOTE, data augemntation with Keras ImageDataGenerator, optimal dropout and epoch grid searching. Where possible, also auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.</p>
 </div>
-<div id="objectives" class="section level4">
-<h4>Objectives</h4>
-<p>The <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview">Plant Pathology Challenge</a> we have attended consists in training a model using images of the <a href="https://arxiv.org/abs/2004.11958">training dataset</a> to</p>
-<ul>
-<li>accurately classify a given image from testing dataset into different diseased category or a healthy leaf;</li>
-<li>accurately distinguish between many diseases, sometimes more than one on a single leaf;</li>
-<li>deal with rare classes and novel symptoms;</li>
-<li>address depth perception—angle, light, shade, physiological age of the leaf;</li>
-<li>Incorporate expert knowledge in identification, annotation, quantification, and guiding computer vision to search for relevant features during learning.</li>
-</ul>
-<p>Submissions are evaluated on <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation">mean column-wise ROC AUC</a>.</p>
-</div>
-<div id="data" class="section level4">
-<h4>Data</h4>
-<p>Both the training and the test <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data">datasets</a> are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases, with variable illumination, angles, surfaces, and noise have been manually captured, expert-annotated to create a pilot dataset for apple scab, cedar apple rust, and healthy leaves.</p>
-<p>We found no indication that “multiple_diseases” refers to both “rust” and “scab”, it just seems to indicate the presence of other different kinds of illnesses.</p>
-</div>
-<div id="solution" class="section level4">
-<h4>Solution</h4>
-<p>In this project we have trained a convolutional neural network and apply the following methods</p>
+<div id="model-training" class="section level1">
+<h1><strong>Model training</strong></h1>
+<p>The Challenge consisted in classifying leaves images into four categories: HEALTHY, MULTIPLE_DISEASES, RUST, SCAB. Altough a MULTIPLE_DISEASES leaf could be affected both by rust and scab, or by rust and another disease or by scab and another disease, because there is no taxonomy we treated the classes as mutually exclusive. This is to say that in principle the model should distinguish between all four classes, as none of them is an abstraction of (some of) the others. <br> The evaluation metric is the <a href="#roc">column-wise ROC</a>.<br> We implemented an explicit keras model (EKM in the following), then also a pre-teined model - DenseNet121 - was used. In order to build a more robust model, we tried/implemented the following techniques (in chronological order):</p>
 <ol style="list-style-type: decimal">
-<li>class balancing with <a href="https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html">SMOTE</a></li>
-<li>data augmentation with <a href="https://keras.io/api/preprocessing/image/">Keras ImageDataGenerator</a></li>
-<li>learning rate schedule</li>
-<li>optimal dropout</li>
-<li>epoch grid search</li>
-<li>filters and feature maps visualization of the layers.</li>
+<li>Class balancing with SMOTE.</li>
+<li>Data augmentation with keras ImageDataGenerator.</li>
+<li>Some fine-tuning/exploration of the models’ layers and parameters, in particular e dropout layer (EKM only) , Early Stopping (DenseNet121 only), learning rate scheduling ( DenseNet121 only).</li>
+<li>An attempt to put a convolutional autoencoder autoencoder between point 2 and point 3.</li>
 </ol>
-<p>Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.</p>
+<p>Secondary information may be found in the <a href="#appendix">Appendix</a>.</p>
 </div>
-<div id="results" class="section level4">
-<h4>Results</h4>
-<ul>
-<li><strong>ROC = 0.956</strong> applying the Keras pre-trained model <a href="https://keras.io/api/applications/densenet/#densenet121-function">DenseNet121</a>;</li>
-<li><strong>ROC = 0.915</strong> applying a CNN which has been defined and trained from scratch.</li>
-</ul>
+<div id="class-balancing-with-smote" class="section level1">
+<h1><strong>Class balancing with <code>SMOTE</code></strong></h1>
+<p><code>SMOTE(sampling_strategy,k_neighbors)</code> is a class balancing algorithm that operates as follows: (one of) the minority class(es) is considered, a random point from it is picked and its first <code>n_neighbors</code> nearest neighbors are found. One of the latters is then randomly selected, and the the vector between this point and the originally selected point is drawn. This vector gets then multiplied by a number between 0 and 1, and the resulting synthetic point is added to the dataset. <br> There exist many variants of <strong>SMOTE</strong>, so besides the standard one also the <strong>SVMSMOTE</strong> and <strong>ADASYN</strong> have been tried. <br> <strong>SVMSMOTE</strong> is a variant of <strong>SMOTE</strong> that first of all fits an SVM on the data, and uses its support vectors to identify points more prone to misclassification (i.e. those on the border of the class cluster): these points are later oversampled more than the others.<br> <strong>ADASYN</strong> instead draws from a distribution over the minority class(es) that is pointwise inversely proportional to their density. That is, more points are generated where the minority class(es) are sparser, and less points where they are more dense.<br> Anyway, the class balancing algorithm that ultimately performed better is baseline <strong>SMOTE</strong>, with some fine tuning on the <code>sampling_strategy</code>( the <code>all</code> value means that all classes are resampled to match the size of the majority class), and the <code>n_neighbors</code> parameters. See <a href="#limitations">Platform limitations</a></p>
 </div>
-<div id="references" class="section level4">
-<h4>References</h4>
-<ol style="list-style-type: decimal">
-<li><a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7">Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees</a>, <em>Kaggle</em> (2020).</li>
-<li>Ranjita Thapa et al. <a href="https://arxiv.org/abs/2004.11958">The Plant Pathology 2020 challenge dataset to classify foliar disease of apples</a>, <em>arXiv pre-print</em> (2020).</li>
-</ol>
+<div id="data-augmentation-with-keras-imagedatagenerator" class="section level1">
+<h1><strong>Data augmentation with Keras <code>ImageDataGenerator</code></strong></h1>
+<p>Click the following link for an introduction to <a href="https://keras.io/api/preprocessing/image/">keras Image preprocessing API</a>. Using Keras’ ImageDataGenerator, after a manual inspection of the images, we founfd that the best data augmentin technique consisted in a random planar rotation, mixed with random horizontal flip.</p>
+</div>
+<div id="some-fine-tuningexploration-of-the-models-layers-and-parameters-in-particular-e-dropout-layer-ekm-only-early-stopping-densenet121-only-learning-rate-scheduling-densenet121-only-and-optimizer-variations-ekm" class="section level1">
+<h1><strong>Some fine-tuning/exploration of the models’ layers and parameters, in particular e dropout layer (EKM only) , Early Stopping (DenseNet121 only), learning rate scheduling ( DenseNet121 only) and optimizer variations (EKM)</strong></h1>
+<p>The explorations reported in the title of this section have been performed. We couldn’t implement Early Stopping in the EKM model, as fluctuation in either validation loss, categorical accuracy and row-wose ROC where too high to set proper <code>min_delta</code> and <code>patience</code> parameters in <a href="https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping">TensorFlow’s Early Stopping</a> implementation. (We also explored some optimizers) <em>(Visto che l’early stopping di tensorflow non va, usiamo quello manuale già implementato? Quali altri optimizers abbiamo provato? Abbiamo una submission per questi?)</em>. The manual implementations of the dropout and early stopping acted simultaneoulsy, so they performed like a grid search. The dropout and epoch values corresponding to the best column-wise ROC were saved and used during testing phase.</p>
+</div>
+<div id="an-attempt-to-put-a-convolutional-autoencoder-autoencoder-between-point-2-and-point-3." class="section level1">
+<h1><strong>An attempt to put a convolutional autoencoder autoencoder between point 2 and point 3.</strong></h1>
+<p>Despite the multiple configurations tried, the best we could get is a <span class="math inline">\(0.7\)</span> column-wise ROC. The reason behind it could be the fact that on one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reduction,s on the other hand even a single bidimensonal maxpooling caused the output image to be too little for last EKM layer to classify. See <a href="#limitations">Platform limitations</a>.</p>
+</div>
+<div id="appendix" class="section level1 unnumbered">
+<h1><strong>Appendix</strong></h1>
+<div id="roc" class="section level3">
+<h3>column-wise ROC</h3>
+<p>From <a href="https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation">Challenge Overview</a> on Kaggle: &gt;Submissions are evaluated on mean column-wise ROC AUC. In other words, the score is the average of the individual AUCs of each predicted column</p>
+</div>
+<div id="limitations" class="section level3">
+<h3>Platform Limitations</h3>
+<p>The newest unstable version of TensorFlow with GPU support is needed to run the code. Unfortunately, we haven’t been able to set proper kernels up on our local machines, so we had to rely on publicly available cloud interactive environments like <a href="https://www.kaggle.com/">Kaggle</a>, that provided free out of the box kernels for our purposes. The only limitations are in terms of cpu RAM, which forced us to downsize the images to about <span class="math inline">\(200*200\)</span> pixels.</p>
+</div>
+<div id="visualization" class="section level3">
+<h3>Visualization</h3>
+<div id="pca" class="section level4">
+<h4>PCA</h4>
+</div>
+<div id="convolutional-filters-and-features-maps" class="section level4">
+<h4>Convolutional Filters and Features Maps</h4>
+</div>
 </div>
 </div>
 </section>
