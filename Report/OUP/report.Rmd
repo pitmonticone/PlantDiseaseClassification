@@ -1,5 +1,5 @@
 ---
-title: "Convolutional Neural Network for Plant Disease Classification "
+title: "Convolutional Neural Network for Plant Disease Classification"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 authors:
   - name: Claudio Moroni
