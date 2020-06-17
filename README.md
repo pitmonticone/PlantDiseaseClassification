@@ -15,8 +15,19 @@
 </p>
 
 <!-- Information badges -->
+</p>
+
 <p align="center">
-[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)]() [![nbviewer](https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/InPhyT/PlantDiseaseDetection/) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pitmonticone/AppliedDynamicalSystems/blob/master)
+  <a href="">
+    <img alt="Kaggle" src="https://kaggle.com/static/images/open-in-kaggle.svg">
+  </a>
+  <a href="https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/">
+    <img alt="nbviewer" src="https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg">
+  </a>
+  <a href="https://colab.research.google.com/github/InPhyT/NeuralNetworksProject/blob/master">
+    <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg">
+  </a>
+  
 </p>
 
 ### Problem 
