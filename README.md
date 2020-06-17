@@ -2,15 +2,13 @@
 ![Languages](https://img.shields.io/github/languages/count/InPhyT/NeuralNetworksProject)
 ![Contributors](https://img.shields.io/github/contributors/InPhyT/NeuralNetworksProject)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) <br>
-[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)]()
-[![nbviewer](https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/InPhyT/PlantDiseaseDetection/)
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pitmonticone/AppliedDynamicalSystems/blob/master)
+
 
 # Convolutional Neural Network for Plant Disease Classification 
 
 * [Report](https://inphyt.github.io/..)
 
-* [Jupyter Notebook]()
+* [Jupyter Notebook]() [![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)]() [![nbviewer](https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/InPhyT/PlantDiseaseDetection/) [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pitmonticone/AppliedDynamicalSystems/blob/master)
 
 ### Problem 
 Misdiagnosis of the many diseases impacting agricultural crops can lead to misuse of chemicals leading to the emergence of resistant pathogen strains, increased input costs, and more outbreaks with significant economic loss and environmental impacts. Current disease diagnosis based on human scouting is time-consuming and expensive, and although computer-vision based models have the promise to increase efficiency, the great variance in symptoms due to age of infected tissues, genetic variations, and light conditions within trees decreases the accuracy of detection.
