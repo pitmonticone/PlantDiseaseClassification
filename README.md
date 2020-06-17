@@ -1,20 +1,29 @@
-![Size](https://img.shields.io/github/repo-size/InPhyT/NeuralNetworksProject)
-![Languages](https://img.shields.io/github/languages/count/InPhyT/NeuralNetworksProject)
-![Contributors](https://img.shields.io/github/contributors/InPhyT/NeuralNetworksProject)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) <br>
+<!-- Meta-Badges -->
+</p>
 
+<p align="center">
+    <img alt="Size" src="https://img.shields.io/github/repo-size/InPhyT/NeuralNetworksProject">
+  </a>
+    <img alt="Languages" src="https://img.shields.io/github/languages/count/InPhyT/NeuralNetworksProject">
+  </a>
+    <img alt="Contributors" src="https://img.shields.io/github/contributors/InPhyT/NeuralNetworksProject">
+  </a>
+    <img alt="MIT Licence" src="https://img.shields.io/badge/License-MIT-yellow.svg">
+  </a>
+  
+</p>
 
 <!-- Title -->
 <h1 align="center">
   Convolutional Neural Network for Plant Disease Classification 
 </h1>
 
-<!-- description -->
+<!-- Subtitle -->
 <h3 align="center">
   <strong> Recognition of Foliar Diseases Categories in Apple Trees.</strong>
 </h3>
 
-<!-- Information badges -->
+<!-- Badges -->
 </p>
 
 <p align="center">
