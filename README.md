@@ -10,9 +10,9 @@
 </h1>
 
 <!-- description -->
-<p align="center">
+<h3 align="center">
   <strong> Recognition of Foliar Diseases Categories in Apple Trees.</strong>
-</p>
+</h3>
 
 <!-- Information badges -->
 </p>
