@@ -21,6 +21,9 @@ knitr::opts_chunk$set(
 	warning = FALSE
 )
 library(knitr)
+
+setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone 
+#setwd("~/GitHub/NeuralNetworksProject/Report/HTML") # Claudio Moroni  
 ```
 
 1. Remember to cite the Dataset Paper;
@@ -41,14 +44,8 @@ Both the training and the test [datasets](https://www.kaggle.com/c/plant-patholo
 * class balancing
 
 ```{r eval=FALSE, include=FALSE}
-
-
 #![Input Images](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/InputImages.png)
-
 ```
-
-
-
 
 # **Model Training**
 
@@ -81,6 +78,7 @@ Click the following link for an introduction to [keras Image preprocessing API](
 
 The explorations reported in the title of this section have been performed. We couldn't implement Early Stopping in the EKM model, as fluctuation in either validation loss, categorical accuracy and row-wose ROC where too high to set proper `min_delta` and `patience` parameters in [TensorFlow's Early Stopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping) implementation. (We also explored some optimizers) *(Visto che l'early stopping di tensorflow non va, usiamo quello manuale già implementato? Quali altri optimizers abbiamo provato? Abbiamo una submission per questi?)*.
 The manual implementations of the dropout and early stopping acted simultaneoulsy, so they performed like a grid search. The dropout and epoch values corresponding to the best column-wise ROC were saved and used during testing phase.
+
 ```{r}
 #![Learning rate schedule](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/LearningRateSchedule.png)
 ```
@@ -93,7 +91,7 @@ Anyway, inspired by the work of others and by some trial and error,  we had a ch
 
 ```{r autoencoder, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, paged.print=FALSE}
 
-include_graphics("/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/AE.png")
+include_graphics("Images/AE.png")
 ```
 
 
@@ -113,7 +111,7 @@ Some online resaerch and trial and error with the network architecture gave us s
 
 ```{r model-architecture, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, paged.print=FALSE}
 
-include_graphics("/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/BaseNet.png") 
+include_graphics("Images/BaseNet.png") 
 ```
 
 
