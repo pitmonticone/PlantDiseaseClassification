@@ -43,7 +43,7 @@
 
 * Read the [report]().
 
-* Explore the code in the [Jupyter notebook]().
+* Read the code in the [Jupyter notebook]().
 
 * Run the code in the [Kaggle notebook]().
 
