@@ -22,8 +22,9 @@ knitr::opts_chunk$set(
 )
 library(knitr)
 
-setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone 
+#setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone 
 #setwd("~/GitHub/NeuralNetworksProject/Report/HTML") # Claudio Moroni  
+setwd("Q:\\tooBigToDrive\\plantsvillage\\Report\\report") # Claudio Moroni  
 ```
 
 1. Remember to cite the Dataset Paper;
@@ -33,9 +34,9 @@ setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone
 
 # **Abstract** {.unnumbered}
 
-In this effort we train a CNN model in order to take part in the [Plant Pathology 2020 - FGVC7](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/discussion/141015), an image classification task where we ultimately achieved a categorical roc score of 0.956 using [denseNet121](https://keras.io/api/applications/densenet/#densenet121-function), and 0.915 using a relatively shallow CNN defined and trained from scratch. The train and the test datasets are both composed of 1821 images, showing various leaves which are to be classified in 4 categories: "healthy", "multiple disases", "rust", "scab", where we founfd no indication that "multiple_diseases" refers to both "rust" and "scab", it just seems to indicate the presece of other (different) kinds of illnesses. The metric used is the categorical roc. In the end, we also output a visulization of the filters and activation maps of the layers, and an SVD decomposition of the dataset. The techniques we used during training are balancing classes with SMOTE, data augemntation with Keras ImageDataGenerator, optimal dropout and epoch grid searching. Where possible, also auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.
+In this effort we train a CNN model in order to take part in the [Plant Pathology 2020 - FGVC7](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/discussion/141015), an image classification task where we ultimately achieved a categorical roc score of 0.972 using [denseNet121](https://keras.io/api/applications/densenet/#densenet121-function), and 0.937 using a relatively shallow CNN defined and trained from scratch. The train and the test datasets are both composed of 1821 images, showing various leaves which are to be classified in 4 categories: "healthy", "multiple disases", "rust", "scab", where we founfd no indication that "multiple_diseases" refers to both "rust" and "scab", it just seems to indicate the presece of other (different) kinds of illnesses. The metric used is the categorical roc. In the end, we also output a visulization of the filters and activation maps of the layers, and an SVD decomposition of the dataset. The techniques we used during training are balancing classes with SMOTE, data augemntation with Keras ImageDataGenerator, optimal dropout and epoch grid searching. Where possible, also auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.
 
-The evaluation metric is the [column-wise ROC](#roc).<br>
+The evaluation metric is the [column-averaged ROC](#roc).<br>
 
 
 # **Data**
@@ -76,14 +77,15 @@ Anyway, the class balancing algorithm that ultimately performed better is baseli
 Click the following link for an introduction to [keras Image preprocessing API](https://keras.io/api/preprocessing/image/). Using Keras' ImageDataGenerator, after a manual inspection of the images, we founfd that the best data augmentin technique consisted in a random planar rotation, mixed with random horizontal flip.
 
 ## **Model Exploration**
-
+An extensve esploration of all models has been performed. here we report the *gridsearch* that ultimately proved better.
 * Some fine-tuning/exploration of the models' layers and parameters, in particular a dropout layer (EKM only) 
-* learning rate scheduling (DenseNet121 only)
 * optimizer variations (EKM)
+* optimal dropout and epoch number search
+* checkpointing
 
-The explorations reported in the title of this section have been performed. We couldn't implement Early Stopping in the EKM model, as fluctuation in either validation loss, categorical accuracy and row-wose ROC where too high to set proper `min_delta` and `patience` parameters in [TensorFlow's Early Stopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping) implementation. (We also explored some optimizers) *(Visto che l'early stopping di tensorflow non va, usiamo quello manuale già implementato? Quali altri optimizers abbiamo provato? Abbiamo una submission per questi?)*.
-The manual implementations of the dropout and early stopping acted simultaneoulsy, so they performed like a grid search. The dropout and epoch values corresponding to the best column-wise ROC were saved and used during testing phase.
-
+We couldn't implement Early Stopping both in the EKM model and the DenseNet, as fluctuations in either validation loss, categorical accuracy and column-averaged ROC where too high to set proper `min_delta` and `patience` parameters in [TensorFlow's Early Stopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping) implementation. With some trial and error, the best optimizer choice for the EKM proved to be the **RMSprop**, while the standard **adam** performed quite well with the DenseNet.
+The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. The dropout and epoch values corresponding to the best column-averaged ROC were saved and used during testing phase. Later, in ordere to establish the quantitative impact of weights initialization on the EKM, an EKM model with the best drop is trained and validated, and the best epochs of this model and its analogon trained and validated previously are compared: there was a small difference, so we decided to make three submissions: one with the baseline model re-trained on all data and with th best drop, one with a model formed from the bst weights founfd before, and one with the DenseNet. Besides fluctuatios, we noticed that the DenseNet tends to occasionally reach higher submission scores. 
+Considering the fact that optimal epoch number varies with trains et size, a possible third attempt would have seen the best epoch number to use in test phase, when the model is retrained on all train data, extrapolated from a (best-epoch) vs (training set size) plot (given stocasticity was not relevant), but this has unfortunately been impossible due to two reasons:  a techinical difficulty in combining scikit's Leraning curves with a era smodel necessarily trained with generators, and platform RAM limitations.
 ```{r}
 #![Learning rate schedule](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/LearningRateSchedule.png)
 ```
@@ -96,9 +98,9 @@ The manual implementations of the dropout and early stopping acted simultaneouls
 
 # **Appendix** {.unnumbered}
 
-### Column-wise ROC {#roc}
+### column-averaged ROC {#roc}
 From [Challenge Overview](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation) on Kaggle:
->Submissions are evaluated on mean column-wise ROC AUC. In other words, the score is the average of the individual AUCs of each predicted column.
+>Submissions are evaluated on mean column-averaged ROC AUC. In other words, the score is the average of the individual AUCs of each predicted column.
 
 ### Platform Computational Limitations {#limitations}
 The newest unstable version of TensorFlow with GPU support is needed to run the code. Unfortunately, we haven't been able to set proper kernels up on our local machines, so we had to rely on publicly available cloud interactive environments like [Kaggle](https://www.kaggle.com/), that provided free out of the box kernels for our purposes. The only limitations are in terms of cpu RAM, which forced us to downsize the images to about $200 \times 200$ pixels.
@@ -114,7 +116,7 @@ include_graphics("Images/BaseNetShort.png")
 
 ### Convolutional AE
 
-Despite the multiple configurations tried, the best we could get is a $0.7$ column-wise ROC. The reason behind it could be the fact that on one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reductions, while on the other hand even a single bidimensonal maxpooling caused the output image to be too little for last EKM layer to classify. See [Platform limitations](#limitations) and see [Model architecture](#model-architecture) . The only way way we managed to at least run it was to build a very shallow autoencoder (just a couple of layers besides the input and the output), with the result  that the loss didn't decrease much. 
+Despite the multiple configurations tried, the best we could get is a $0.7$ column-averaged ROC. The reason behind it could be the fact that on one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reductions, while on the other hand even a single bidimensonal maxpooling caused the output image to be too little for last EKM layer to classify. See [Platform limitations](#limitations) and see [Model architecture](#model-architecture) . The only way way we managed to at least run it was to build a very shallow autoencoder (just a couple of layers besides the input and the output), with the result  that the loss didn't decrease much. 
 Anyway, inspired by the work of others and by some trial and error,  we had a chance to collect some architectural criteria to build an convolutional autoencoder that at least learns.  The folowing  is to be intended as an empirical recipe, with no or little theoretical foundation of the reasons behind its ingredients. The autoencoder is divided in an encoder and a decoder. The encoder should of course start with an input layer, followed by some blocks of Conv2D and Pooling layers (in our case it was MaxPooling2D). Deeper layers should have decreasing filter numbers (for images as big as ours, a range from 64 to 32 should work). The decoder should start with a specular copy of the encoder, where Conv2D layers are substituted by Conv2DTranspose,Pooling by UpSampling. The decoder shall then have as its last two layers  a BatchNormalization layer and  Conv2DTranspose with 3 filters (in order to be able to compare output with input) activated by a sigmoid (this explains the BatchNormalization layer). The unknown numner of Conv2D-pooling blocks in the encoder (that determines the number of Conv2DTranspose-UpSampling in the decoder) has to be jointly concocted with the number of Conv2D-pooling layers of the network (see [Model Architecture](#model-architecture))
 
 
