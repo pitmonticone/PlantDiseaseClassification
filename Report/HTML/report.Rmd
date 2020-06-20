@@ -1,13 +1,13 @@
 ---
-title: "Plant Pathology 2020 - FGVC7"
-subtitle: "Identify the Category of Foliar Diseases in Apple Trees"
+title: "  Convolutional Neural Network for Plant Disease Classification "
+subtitle: "Recognition of Foliar Diseases in Apple Trees"
 author: "**Claudio Moroni** | **Davide Orsenigo** | **Pietro Monticone**"
 date: "`r format(Sys.time(), '%d %B %Y')`, *University of Turin*"
-output: pdf_document
- #prettydoc::html_pretty:
-  #  theme: cayman
-   # highlight: github
-  #  toc: true
+output: 
+ prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
 fontsize: 10pt
 #bibliography: bibliography.bibtex # https://doi2bib.org
 #biblio-style: apalike
@@ -22,9 +22,9 @@ knitr::opts_chunk$set(
 )
 library(knitr)
 
-#setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone 
+setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone 
 #setwd("~/GitHub/NeuralNetworksProject/Report/HTML") # Claudio Moroni  
-setwd("Q:\\tooBigToDrive\\plantsvillage\\Report\\report") # Claudio Moroni  
+#setwd("Q:\\tooBigToDrive\\plantsvillage\\Report\\report") # Claudio Moroni  
 ```
 
 1. Remember to cite the Dataset Paper;
@@ -42,41 +42,31 @@ The evaluation metric is the [column-averaged ROC](#roc).<br>
 # **Data**
 
 Both the training and the test [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases, with variable illumination, angles, surfaces, and noise have been manually captured, expert-annotated to create a pilot dataset for apple scab, cedar apple rust, and healthy leaves. 
-The Challenge consisted in classifying leaves images into four categories: HEALTHY, MULTIPLE_DISEASES, RUST, SCAB. Altough a MULTIPLE_DISEASES leaf could be affected both by rust and scab, or by rust and another disease or by scab and another disease, because there is no taxonomy we treated the classes as mutually exclusive. This is to say that in principle the model should distinguish between all four classes, as none of them is an abstraction of (some of) the others.
 
-* categories/ classes
-* mutual exclusivity
-* class balancing
 
-[PCA](#pca)
+![Input Images](Images/InputImages.png)
 
-```{r eval=FALSE, include=FALSE}
-#![Input Images](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/InputImages.png)
-```
+The Challenge consisted in classifying leaves images into four categories: HEALTHY ($h$), MULTIPLE_DISEASES ($m$), RUST ($r$), SCAB ($s$). Altough a MULTIPLE_DISEASES leaf could be affected both by rust and scab, or by rust and another disease or by scab and another disease, because there is no taxonomy we treated the classes as mutually exclusive. This is to say that in principle the model should distinguish between all four classes, as none of them is an abstraction of (some of) the others. Il dataset non risulta bilanciato, bensì distribuito nel modo seguente $(h = 516, m = 91, r = 622, s = 592)$. 
 
-# **Pipeline Description and Model Training**
+Di seguito andiamo a rappresentare le prime due componenti di una [Truncated SVD](#pca) per identificare qualitativamente se le classi distinte sono clusterizzate. Come è ragionevole pensare per elementi così complessi ciò non risulta immediatamente possibile. Si può tuttavia apprezzare l'amplificazioen classi di `SMOTE` e verificare che i punti generati clusterizzano come prevedibile.
 
-We implemented an explicit keras model (EKM in the following), then also a pre-teined model - DenseNet121 - was used. 
-In order to build a more robust model, we tried/implemented the following techniques (in chronological order):
+![**Figure 2.** Truncated SVD](Images/TruncatedSVD.png)
 
-1. Class balancing with SMOTE.
-2. Data augmentation with keras ImageDataGenerator.
-3. Some fine-tuning/exploration of the models' layers and parameters, in particular e dropout layer (EKM only), Early Stopping (DenseNet121 only), learning rate scheduling ( DenseNet121 only).
-4. An attempt to put a convolutional autoencoder autoencoder between point 2 and point 3.
 
-Secondary information may be found in the [Appendix](#appendix).
+# **Class Balancing with `SMOTE`**
 
-## **Class Balancing with `SMOTE`**
 `SMOTE(sampling_strategy,k_neighbors)` is a class balancing algorithm that operates as follows: (one of) the minority class(es) is considered, a random point from it is picked and its first `n_neighbors` nearest neighbors are found. One of the latters is then randomly selected, and the the vector between this point and the originally selected point is drawn. This vector gets then multiplied by a number between 0 and 1, and the resulting synthetic point is added to the dataset. <br>
 There exist many variants of **SMOTE**, so besides the standard one also the **SVMSMOTE** and **ADASYN** have been tried. <br>
 **SVMSMOTE** is a variant of **SMOTE** that first of all fits an SVM on the data, and uses its support vectors to identify points more prone to misclassification (i.e. those on the border of the class cluster): these points are later oversampled more than the others.<br>
 **ADASYN** instead draws from a distribution over the minority class(es) that is pointwise inversely proportional to their density. That is, more points are generated where the minority class(es) are sparser, and less points where they are more dense.<br>
 Anyway, the class balancing algorithm that ultimately performed better is baseline **SMOTE**,  with some fine tuning on the `sampling_strategy`( the `all` value means that all classes are resampled to match the size of the majority class), and the `n_neighbors` parameters. See [Platform limitations](#limitations)
 
-## **Data Augmentation with Keras `ImageDataGenerator`**
+# **Data Augmentation with Keras `ImageDataGenerator`**
+
 Click the following link for an introduction to [keras Image preprocessing API](https://keras.io/api/preprocessing/image/). Using Keras' ImageDataGenerator, after a manual inspection of the images, we founfd that the best data augmentin technique consisted in a random planar rotation, mixed with random horizontal flip.
 
-## **Model Exploration**
+# **Model Architecture Exploration**
+
 An extensve esploration of all models has been performed. here we report the *gridsearch* that ultimately proved better.
 * Some fine-tuning/exploration of the models' layers and parameters, in particular a dropout layer (EKM only) 
 * optimizer variations (EKM)
@@ -90,30 +80,6 @@ Considering the fact that optimal epoch number varies with trains et size, a pos
 #![Learning rate schedule](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/LearningRateSchedule.png)
 ```
 
-# **Results**
-
-* **ROC performance**
-* **Confusion matrix**
-* **Training history**
-
-# **Appendix** {.unnumbered}
-
-### column-averaged ROC {#roc}
-From [Challenge Overview](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation) on Kaggle:
->Submissions are evaluated on mean column-averaged ROC AUC. In other words, the score is the average of the individual AUCs of each predicted column.
-
-### Platform Computational Limitations {#limitations}
-The newest unstable version of TensorFlow with GPU support is needed to run the code. Unfortunately, we haven't been able to set proper kernels up on our local machines, so we had to rely on publicly available cloud interactive environments like [Kaggle](https://www.kaggle.com/), that provided free out of the box kernels for our purposes. The only limitations are in terms of cpu RAM, which forced us to downsize the images to about $200 \times 200$ pixels.
-
-### Model Architecture {#model-arcitecture}
-Some online resaerch and trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset dependent model for image classifcation tasks. the network should of course start with a Input layer, followed by blocks of Conv2D-Pooling (MaxPooling in our case) layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c \, \,$ channels) where $n$ is of the order of units. This should be then followed by $1-2$ dense layers, and a final dense classifier layer. If The classification is binary (sigmoid), then the last layer should be preceeded by a BatchNormlization layer.
-
-
-```{r model-architecture, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, paged.print=FALSE}
-
-include_graphics("Images/BaseNetShort.png") 
-```
-
 ### Convolutional AE
 
 Despite the multiple configurations tried, the best we could get is a $0.7$ column-averaged ROC. The reason behind it could be the fact that on one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reductions, while on the other hand even a single bidimensonal maxpooling caused the output image to be too little for last EKM layer to classify. See [Platform limitations](#limitations) and see [Model architecture](#model-architecture) . The only way way we managed to at least run it was to build a very shallow autoencoder (just a couple of layers besides the input and the output), with the result  that the loss didn't decrease much. 
@@ -121,20 +87,58 @@ Anyway, inspired by the work of others and by some trial and error,  we had a ch
 
 
 ```{r autoencoder, echo=FALSE, fig.align='center', fig.cap = "**Figure 2.** Convolutional Autoencoder", message=FALSE, warning=FALSE, paged.print=FALSE}
-
 include_graphics("Images/AEShort.png")
 ```
 
+
+### Selected Model Architecture {#model-arcitecture}
+Some online resaerch and trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset dependent model for image classifcation tasks. the network should of course start with a Input layer, followed by blocks of Conv2D-Pooling (MaxPooling in our case) layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c \, \,$ channels) where $n$ is of the order of units. This should be then followed by $1-2$ dense layers, and a final dense classifier layer. If The classification is binary (sigmoid), then the last layer should be preceeded by a BatchNormlization layer.
+
+```{r model-architecture, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/BaseNetShort.png") 
+```
+
+# **Results**
+
+Submissions are evaluated on **mean column-wise ROC AUC**.
+
+* **ROC = 0.956** applying the Keras pre-trained model [DenseNet121](https://keras.io/api/applications/densenet/#densenet121-function);
+* **ROC = 0.915** applying a CNN which has been defined and trained from scratch. 
+
+![EKM](Images/ConfusionMatrixEKM.png) ![DenseNet121](Images/ConfusionMatrixDenseNet121.png)
+
+
+
+
+# **Appendix** {.unnumbered}
+
+### Platform Computational Limitations {#limitations}
+The newest unstable version of TensorFlow with GPU support is needed to run the code. Unfortunately, we haven't been able to set proper kernels up on our local machines, so we had to rely on publicly available cloud interactive environments like [Kaggle](https://www.kaggle.com/), that provided free out of the box kernels for our purposes. The only limitations are in terms of cpu RAM, which forced us to downsize the images to about $200 \times 200$ pixels.
 
 ### Visualization
 
 #### PCA {#pca}
 
-![**Truncated SVD**. texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext](Images/TruncatedSVD.png)
+Nonostante si sia poi stabilito di non usare la PCA per la dimensionality reduction del dataset può essere interessante visualizzare i primi dieci layers e confrontarli qualitativamente con una sequenza di layers posti più in profondità. 
 
-![**Figure M.** Layer 1 of PCA.](Images/PCA1.png)
+![**Figure M.** Layer 1-10 of PCA.](Images/PCA1.png)
 
-![**Figure M+1.** Layer 200 of PCA.](Images/PCA200.png)
+![**Figure M+1.** Layer 200-210 of PCA.](Images/PCA200.png)
 
-#### Convolutional Filters and Features Maps
+Come prevedibile risulta più difficile discernere patterns nei layers più profondi (si veda il contrasto tra [Fig. M](#pca1) e [Fig. M+1](#pca200) ).
 
+Di seguito viene visualizzata l'analisi dell'explained variance dove, utilizzando il criterio di conservazione del 90% della varianza, otteniamo 429 componenti.
+
+![](Images/ExplainedVariance90.png)
+
+#### Convolutional Filters and Features Maps {#filters-featuremaps}
+
+
+
+![](Images/FiltersEKM.png)
+
+# **References**
+
+1. [Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees](https://www.kaggle.com/c/plant-pathology-2020-fgvc7), *Kaggle* (2020). 
+1. Ranjita Thapa et al. [The Plant Pathology 2020 challenge dataset to classify foliar disease of apples](https://arxiv.org/abs/2004.11958), *arXiv pre-print* (2020). 
+1. Gao Huang et al. [Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993), *arXiv pre-print* (2018). 

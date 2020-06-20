@@ -20,7 +20,7 @@
 
 <!-- Subtitle -->
 <h3 align="center">
-  <strong> Recognition of Foliar Diseases Categories in Apple Trees.</strong>
+  Recognition of Foliar Diseases Categories in Apple Trees
 </h3>
 
 <!-- Badges -->
