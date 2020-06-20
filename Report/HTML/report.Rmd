@@ -1,5 +1,5 @@
 ---
-title: "  Convolutional Neural Network for Plant Disease Classification "
+title: "Convolutional Neural Network for Plant Disease Classification"
 subtitle: "Recognition of Foliar Diseases in Apple Trees"
 author: "**Claudio Moroni** | **Davide Orsenigo** | **Pietro Monticone**"
 date: "`r format(Sys.time(), '%d %B %Y')`, *University of Turin*"
@@ -26,11 +26,6 @@ setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone
 #setwd("~/GitHub/NeuralNetworksProject/Report/HTML") # Claudio Moroni  
 #setwd("Q:\\tooBigToDrive\\plantsvillage\\Report\\report") # Claudio Moroni  
 ```
-
-1. Remember to cite the Dataset Paper;
-1. Separate official from attempted solutions;
-1. Stress the difference between `SMOTE` and `ImageDataGenerator`; 
-1. Model architecture diagram with `tensorflow`;
 
 # **Abstract** {.unnumbered}
 
@@ -136,6 +131,49 @@ Di seguito viene visualizzata l'analisi dell'explained variance dove, utilizzand
 
 
 ![](Images/FiltersEKM.png)
+
+
+Convolutional neural networks, have internal structures that are designed to operate upon two-dimensional image data, and as such preserve the spatial relationships for what was learned by the model. Specifically, the two-dimensional filters learned by the model can be inspected and visualized to discover the types of features that the model will detect, and the activation maps output by convolutional layers can be inspected to understand exactly what features were detected for a given input image.
+
+In this tutorial, you will discover how to develop simple visualizations for filters and feature maps in a convolutional neural network.
+
+After completing this tutorial, you will know:
+
+How to develop a visualization for specific filters in a convolutional neural network.
+How to develop a visualization for specific feature maps in a convolutional neural network.
+How to systematically visualize feature maps for each block in a deep convolutional neural network.
+Discover how to build models for photo classification, object detection, face recognition, and more in my new computer vision book, with 30 step-by-step tutorials and full source code.
+
+
+Perhaps the simplest visualization to perform is to plot the learned filters directly.
+
+In neural network terminology, the learned filters are simply weights, yet because of the specialized two-dimensional structure of the filters, the weight values have a spatial relationship to each other and plotting each filter as a two-dimensional image is meaningful (or could be).
+
+The first step is to review the filters in the model, to see what we have to work with.
+
+The model summary printed in the previous section summarizes the output shape of each layer, e.g. the shape of the resulting feature maps. It does not give any idea of the shape of the filters (weights) in the network, only the total number of weights per layer.
+
+We can access all of the layers of the model via the model.layers property.
+
+Each layer has a layer.name property, where the convolutional layers have a naming convolution like block#_conv#, where the ‘#‘ is an integer. Therefore, we can check the name of each layer and skip any that don’t contain the string ‘conv‘.
+
+Each convolutional layer has two sets of weights.
+
+One is the block of filters and the other is the block of bias values. These are accessible via the layer.get_weights() function. We can retrieve these weights and then summarize their shape.
+
+We can see that all convolutional layers use 3×3 filters, which are small and perhaps easy to interpret.
+
+An architectural concern with a convolutional neural network is that the depth of a filter must match the depth of the input for the filter (e.g. the number of channels).
+
+We can see that for the input image with three channels for red, green and blue, that each filter has a depth of three (here we are working with a channel-last format). We could visualize one filter as a plot with three images, one for each channel, or compress all three down to a single color image, or even just look at the first channel and assume the other channels will look the same. The problem is, we then have 63 other filters that we might like to visualize.
+
+Now we can enumerate the first six filters out of the 64 in the block and plot each of the three channels of each filter.
+
+Running the example creates a figure with six rows of three images, or 18 images, one row for each filter and one column for each channel
+
+We can see that in some cases, the filter is the same across the channels (the first row), and in others, the filters differ (the last row).
+
+The dark squares indicate small or inhibitory weights and the light squares represent large or excitatory weights. Using this intuition, we can see that the filters on the first row detect a gradient from light in the top left to dark in the bottom right.
 
 # **References**
 
