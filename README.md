@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-  <a href="">
+  <a href="https://www.kaggle.com/inphyt2020/neuralnetworksproject">
     <img alt="Kaggle" src="https://kaggle.com/static/images/open-in-kaggle.svg">
   </a>
   <a href="https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/">
@@ -45,7 +45,7 @@
 
 * Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/notebook.ipynb).
 
-* Run the code in the [Kaggle notebook]().
+* Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
 
 
 ## Extended Abstract
