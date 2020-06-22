@@ -41,7 +41,7 @@ Submissions are evaluated on [mean column-wise ROC AUC](https://www.kaggle.com/c
 
 ### Data 
 
-Both the training and the testing [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy` ($h$), `multiple_diseases` ($m$), `rust` ($r$), `scab` ($s$). 
+Both the training and the testing [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy`, `multiple_diseases`, `rust`, `scab`. 
 
 ### Methods
 
