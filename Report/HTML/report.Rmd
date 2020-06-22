@@ -152,7 +152,7 @@ plot_grid(p1, p2)
 
 ## **Appendix**
 
-### Additional Material {#additional-material}
+### Related Material {#additional-material}
 
 * Explore the [GitHub repository](https://github.com/InPhyT/NeuralNetworksProject) of the project.
 * Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/notebook.ipynb).

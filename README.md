@@ -20,7 +20,7 @@
 
 <!-- Subtitle -->
 <h3 align="center">
-  Dataset Analysis and CNN Models Optimization for Plant Disease Classification 
+  Dataset Analysis and CNN Models Optimization for Plant Disease Classification
 </h3>
 
 <!-- Badges -->
