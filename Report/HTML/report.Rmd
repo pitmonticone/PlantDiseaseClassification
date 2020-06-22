@@ -91,10 +91,10 @@ We have adopted the Keras `ImageDataGenerator` and, after a manual inspection of
 
 We have implemented an extensive exploration of all models and here is reported the **grid search** that achieved the best performance:
 
-1. some exploration and fine-tuning of the layers and parameters of the models (i.p. a dropout layer for the `EKM` only) 
-1. variations of the optimizer (for the `EKM` only)
-1. optimal dropout and epoch number search
-1. checkpointing
+1. some exploration and fine-tuning of the layers and parameters of the models (i.p. a dropout layer for the `EKM` only) ;
+1. variations of the optimizer (for the `EKM` only) ;
+1. optimal dropout and epoch number search ;
+1. checkpointing .
 
 We couldn't implement **early stopping** both in `EKM` and `DenseNet121`, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to properly set the `min_delta` and `patience` parameters in the [TensorFlow implementation](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping). 
 
