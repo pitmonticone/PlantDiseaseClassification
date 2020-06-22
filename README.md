@@ -15,7 +15,7 @@
 
 <!-- Title -->
 <h1 align="center">
-  Convolutional Neural Network for Plant Disease Classification 
+  Dataset Analysis and CNN Models Optimization for Plant Disease Classification 
 </h1>
 
 <!-- Subtitle -->
@@ -51,9 +51,11 @@
 ## Extended Abstract
 
 ### Problem 
+
 Misdiagnosis of the many diseases impacting agricultural crops can lead to misuse of chemicals leading to the emergence of resistant pathogen strains, increased input costs, and more outbreaks with significant economic loss and environmental impacts. Current disease diagnosis based on human scouting is time-consuming and expensive, and although computer-vision based models have the promise to increase efficiency, the great variance in symptoms due to age of infected tissues, genetic variations, and light conditions within trees decreases the accuracy of detection.
 
 ### Objectives
+
 The [Plant Pathology Challenge](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview) we have attended consists in training a model using images of the [training dataset](https://arxiv.org/abs/2004.11958) to
 * accurately classify a given image from testing dataset into different diseased category or a healthy leaf; 
 * accurately distinguish between many diseases, sometimes more than one on a single leaf;
@@ -65,20 +67,18 @@ Submissions are evaluated on [mean column-wise ROC AUC](https://www.kaggle.com/c
 
 ### Data 
 
-Both the training and the test [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases, with variable illumination, angles, surfaces, and noise have been manually captured, expert-annotated to create a pilot dataset for apple scab, cedar apple rust, and healthy leaves. 
+Both the training and the testing [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy` ($h$), `multiple_diseases` ($m$), `rust` ($r$), `scab` ($s$). 
 
+### Methods
 
-### Solution 
-In this project we have trained a convolutional neural network and apply the following methods
+In this project we have trained a convolutional neural network and applied the following methods
 
 1. Class balancing with [SMOTE](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
 1. Data augmentation with [Keras ImageDataGenerator](https://keras.io/api/preprocessing/image/)
 1. Learning rate schedule
 1. Optimal dropout
 1. Epoch grid search
-1. Filters and feature maps visualization of the layers.
-
-Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.
+1. Visualization of convolutional filters and activation maps of the layers.
 
 ### Results 
 
@@ -86,5 +86,7 @@ Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.
 * **ROC = 0.937** applying a CNN which has been defined and trained from scratch. 
 
 ### References 
+
 1. [Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees](https://www.kaggle.com/c/plant-pathology-2020-fgvc7), *Kaggle* (2020). 
 1. Ranjita Thapa et al. [The Plant Pathology 2020 challenge dataset to classify foliar disease of apples](https://arxiv.org/abs/2004.11958), *arXiv pre-print* (2020). 
+1. Gao Huang et al. [Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993), *arXiv pre-print* (2018). 
