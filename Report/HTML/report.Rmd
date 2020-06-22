@@ -58,7 +58,7 @@ Later in the report we will describe an attempt using a [convolutional autoencod
 
 ## **Pipeline and Other Attempts**
 
-#### Class Balancing with `SMOTE`
+### Class Balancing with `SMOTE` {#smote}
 
 `SMOTE(sampling_strategy, k_neighbors)` is a class balancing algorithm that operates as follows:
 
@@ -78,11 +78,11 @@ We have obtained the best performance applying baseline `SMOTE` with some fine-t
 include_graphics("Images/TruncatedSVD_postSMOTE.png")
 ```
 
-#### Data Augmentation with Keras `ImageDataGenerator`
+### Data Augmentation with Keras `ImageDataGenerator` {#data-generator}
 
 We have adopted the Keras `ImageDataGenerator` and, after a manual inspection of the images, we found that the best data augmentation technique was a random planar rotation combined with random horizontal flip. ^[For further information read the [Keras image pre-processing API](https://keras.io/api/preprocessing/image/).]
 
-#### Model Architecture Exploration
+### Model Architecture Exploration {#exploration}
 
 We have implemented an extensive exploration of all models and here is reported the **grid search** that achieved the best performance:
 
@@ -116,7 +116,7 @@ The only way way we managed to at least run it and see some loss drop was to bui
 Anyway, inspired by the work of others and by some trial and error,  we had a chance to collect some architectural criteria to build an convolutional autoencoder that at least learns.  The folowing  is to be intended as an empirical recipe, with no or little theoretical foundation of the reasons behind its ingredients. The autoencoder is divided in an encoder and a decoder. The encoder should of course start with an input layer, followed by some blocks of Conv2D and Pooling layers (in our case it was MaxPooling2D). Deeper layers should have decreasing filter numbers (for images as big as ours, a range from 64 to 32 should work). The decoder should start with a specular copy of the encoder, where Conv2D layers are substituted by Conv2DTranspose,Pooling by UpSampling. The decoder shall then have as its last two layers  a BatchNormalization layer and  Conv2DTranspose with 3 filters (in order to be able to compare output with input) activated by a sigmoid (this explains the BatchNormalization layer). The unknown numner of Conv2D-pooling blocks in the encoder (that determines the number of Conv2DTranspose-UpSampling in the decoder) has to be jointly concocted with the number of Conv2D-pooling layers of the network (see [Model Architecture](#model-architecture))
 
 
-```{r ae, echo=FALSE, fig.align='center', fig.cap='**FIGURE 4.** Schematic representation of the convolutional autoencoder.', out.width=300, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r ae, echo=FALSE, fig.align='center', fig.cap='**FIGURE 4.** Schematic representation of the convolutional autoencoder.', out.width=350, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 include_graphics("Images/AEShort.png")
 ```
@@ -126,7 +126,7 @@ include_graphics("Images/AEShort.png")
 
 Some online resaerch and trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset dependent model for image classifcation tasks. the network should of course start with a Input layer, followed by blocks of Conv2D-Pooling (MaxPooling in our case) layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c \, \,$ channels) where $n$ is of the order of units. This should be then followed by $1-2$ dense layers, and a final dense classifier layer. If The classification is binary (sigmoid), then the last layer should be preceeded by a BatchNormlization layer.
 
-```{r basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE 5.** Schematic representation of the selected model architecture.', out.width=300, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE 5.** Schematic representation of the selected model architecture.', out.width=350, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 include_graphics("Images/BaseNetShort.png")
 ```
@@ -134,9 +134,7 @@ include_graphics("Images/BaseNetShort.png")
 ## **Results**
 
 The performance of the models has been evaluated on **mean column-wise ROC AUC**: 0.972 for `DenseNet121` and 0.937 for `EKM`.
-
-
-```{r confusion-matrices, echo=FALSE, fig.align='center', fig.cap='**FIGURE 6.** Confusion matrices of `EKM` (left) and `DenseNet121` (right).', message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r confusion-matrices, echo=FALSE, fig.align='center', fig.cap='**FIGURE 6.** Confusion matrices of `EKM` (left) and `DenseNet121` (right).', out.width=800, out.height=550, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(cowplot)
 library(ggplot2)
 
@@ -169,13 +167,13 @@ Since the last unstable version of GPU-supported TensorFlow is required to run t
 
 #### *PCA* {#pca}
 
-```{r pca1, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 7.** The first ten principal directions of the PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r pca1, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 7.** The first ten principal directions of the PCA.", out.width=800, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/PCA1.png")
 ```
-```{r pca200, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 8.** Directions 200-210 of the PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r pca200, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 8.** Directions 200-210 of the PCA.",  out.width=800, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/PCA200.png")
 ```
-```{r variance, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 9.** Explained Variance.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r variance, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 9.** Explained Variance.",  out.width=550, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/ExplainedVariance90.png")
 ```
 
@@ -183,13 +181,11 @@ include_graphics("Images/ExplainedVariance90.png")
 
 **text / simple reference from main text.**
 
-```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 10.** Three channels with some of the first 3x3 filters of the `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 10.** Three channels with some of the first 3x3 filters of the `EKM`.", out.width=550, out.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FiltersEKM.png")
 ```
 
-
 **text / simple reference from main text.**
-
 
 ```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 11.** Activation maps of the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps2.png")
