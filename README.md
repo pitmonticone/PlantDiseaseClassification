@@ -41,9 +41,9 @@
 
 ## How to Explore this Project
 
-* Read the [report]().
+* Read the report ([PDF](https://github.com/InPhyT/NeuralNetworksProject/Report/report.pdf), [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html)).
 
-* Read the code in the [Jupyter notebook]().
+* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/notebook.ipynb).
 
 * Run the code in the [Kaggle notebook]().
 
