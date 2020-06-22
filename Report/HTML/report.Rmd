@@ -56,7 +56,7 @@ As one could have resonably expected given such a high dimensionality, the datas
 Later in the report we will describe an attempt using a [convolutional autoencoder](#ae), while in the next section we can verify the amplification of the classes performed by `SMOTE` and recognize the clustering of the generated points.  
 
 
-## **Pipeline and Other Attempts** {#methods}
+## **Methodology** {#methodology}
 
 ### Class Balancing with `SMOTE` {#smote}
 

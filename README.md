@@ -67,7 +67,7 @@ Submissions are evaluated on [mean column-wise ROC AUC](https://www.kaggle.com/c
 
 Both the training and the testing [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy`, `multiple_diseases`, `rust`, `scab`. 
 
-### Methods
+### Methodology
 
 1. Class balancing with [SMOTE](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
 1. Data augmentation with [Keras ImageDataGenerator](https://keras.io/api/preprocessing/image/)
