@@ -43,7 +43,7 @@ Altough a leaf labeled as `multiple_diseases` could be affected by a variety of 
 include_graphics("Images/InputImages.png")
 ```
 
-Although we have ultimately decided not to apply the **PCA** to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance. As we can appreciate in the figures reported in the [appendix](#pca), the principal components with lower retained variance correspond to almost pure noise and from the retained variance assesment (using the criterion of 90% variance retention) we have obtained 429 components.
+Although we have ultimately decided not to apply the **PCA** to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance. As we can appreciate in the figures reported in the [Appendix](#pca), the principal components with lower retained variance correspond to almost pure noise and from the retained variance assesment (using the criterion of 90% variance retention) we have obtained 429 components.
 
 Here instead we visualize the first two principal components of a **truncated SVD** to qualitatively investigate the linear separability of the dataset ^[**Assumption**: if the dataset is linearly separable, the direction along which which the classes diverge is one of the principal components  with larger retained variance, otherwise the noise would be greater than the signal.]. 
 
@@ -56,7 +56,7 @@ As one could have resonably expected given such a high dimensionality, the datas
 Later in the report we will describe an attempt using a [convolutional autoencoder](#ae), while in the next section we can verify the amplification of the classes performed by `SMOTE` and recognize the clustering of the generated points.  
 
 
-## **Pipeline and Other Attempts**
+## **Pipeline and Other Attempts** {#methods}
 
 ### Class Balancing with `SMOTE` {#smote}
 
@@ -179,13 +179,9 @@ include_graphics("Images/ExplainedVariance90.png")
 
 #### *Filters and Activation Maps* {#filters-featuremaps}
 
-**text / simple reference from main text.**
-
 ```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 10.** Three channels with some of the first 3x3 filters of the `EKM`.", out.width=550, out.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FiltersEKM.png")
 ```
-
-**text / simple reference from main text.**
 
 ```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 11.** Activation maps of the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps2.png")
