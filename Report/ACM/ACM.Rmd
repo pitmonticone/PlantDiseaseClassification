@@ -1,112 +1,194 @@
 ---
-title: "Convolutional Neural Network for Plant Disease Classification"
+title: "Dataset Analysis and CNN Models Optimization for Plant Disease Classification"
 author:
   - name: Claudio Moroni
     email: claudio.moroni@edu.unito.it
     affiliation: University of Turin
-  - name: Davide Orsenigo
-    email: davide.orsenigo@edu.unito.it
-    affiliation: University of Turin
   - name: Pietro Monticone
     email: pietro.monticone@edu.unito.it
     affiliation: University of Turin
+  - name: Davide Orsenigo
+    email: davide.orsenigo@edu.unito.it
+    affiliation: University of Turin
 abstract: |
-    In this effort we train a CNN model in order to take part in the [Plant Pathology 2020 - FGVC7](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/discussion/141015), an image classification task where we ultimately achieved a categorical roc score of 0.956 using [denseNet121](https://keras.io/api/applications/densenet/#densenet121-function), and 0.915 using a relatively shallow CNN defined and trained from scratch. The train and the test datasets are both composed of 1821 images, showing various leaves which are to be classified in 4 categories: "healthy", "multiple disases", "rust", "scab", where we founfd no indication that "multiple_diseases" refers to both "rust" and "scab", it just seems to indicate the presece of other (different) kinds of illnesses. The metric used is the categorical roc. In the end, we also output a visulization of the filters and activation maps of the layers, and an SVD decomposition of the dataset. The techniques we used during training are balancing classes with SMOTE, data augemntation with Keras ImageDataGenerator, optimal dropout and epoch grid searching. Where possible, also auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned. It consists of two paragraphs.
-bibliography: sigproc.bib
+    We have attended the Kaggle challange *Plant Pathology 2020 - FGVC7*. In this effort we have trained a convolutional neural network model with the given training dataset to classify testing images into different disease categories. During the training phase we have adopted class balancing, data augmentation, optimal dropout, epoch grid searching and, wherever possible, we have also manually fine-tuned the auxiliary elements of the pipeline. The SVD decomposition of the dataset, the convolutional filters and activation maps have been visualized. We have ultimately achieved a mean column-wise ROC AUC of 0.937 applying `EKM`, a relatively shallow CNN defined and trained from scratch, and 0.972 applying the pre-trained Keras model `DenseNet121`, a CNN whose main feature relies on the connection between layers that are non contiguous (i.e. the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.  
+#bibliography: sigproc.bib
 csl: acm-sig-proceedings.csl
 output: rticles::acm_article
 ---
 
-1. Remember to cite the Dataset Paper;
-1. Separate official from attempted solutions;
-1. Stress the difference between `SMOTE` and `ImageDataGenerator`; 
-1. Model architecture diagram with `tensorflow`;
+# Problem
+
+Misdiagnosis of the many diseases impacting agricultural crops can lead to misuse of chemicals leading to the emergence of resistant pathogen strains, increased input costs, and more outbreaks with significant economic loss and environmental impacts. Current disease diagnosis based on human scouting is time-consuming and expensive, and although computer-vision based models have the promise to increase efficiency, the great variance in symptoms due to age of infected tissues, genetic variations, and light conditions within trees decreases the accuracy of detection.
 
 # Data
 
-Both the training and the test [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases, with variable illumination, angles, surfaces, and noise have been manually captured, expert-annotated to create a pilot dataset for apple scab, cedar apple rust, and healthy leaves. 
+Both the training and the testing datasets are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy` ($h$), `multiple_diseases` ($m$), `rust` ($r$), `scab` ($s$). 
 
-* categories/ classes
-* mutual exclusivity
-* class balancing
+Altough a leaf labeled as `multiple_diseases` could be affected by a variety of diseases including rust, scab or both, we treated the classes as mutually exclusive because there is no taxonomy: in principle the model should distinguish between all four classes, as none of them is an abstraction of any of the others. The dataset is not balanced, but distributed as follows $(h = 516, m = 91, r = 622, s = 592)$. 
 
-![Input Images](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/InputImages.png)
+Even if we have ultimately decided not to apply the **PCA** to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance. As we can appreciate in the figures reported in the [Appendix](#pca), the principal components with lower retained variance correspond to almost pure noise and from the retained variance assesment (using the criterion of 90% variance retention) we have obtained 429 components.
 
-# Model Training
+Here instead we visualize the first two principal components of a **truncated SVD** to qualitatively investigate the linear separability of the dataset ^[**Assumption**: if the dataset is linearly separable, the direction along which which the classes diverge is one of the principal components  with larger retained variance, otherwise the noise would be greater than the signal.]. 
 
-The Challenge consisted in classifying leaves images into four categories: HEALTHY, MULTIPLE_DISEASES, RUST, SCAB. Altough a MULTIPLE_DISEASES leaf could be affected both by rust and scab, or by rust and another disease or by scab and another disease, because there is no taxonomy we treated the classes as mutually exclusive. This is to say that in principle the model should distinguish between all four classes, as none of them is an abstraction of (some of) the others. <br>
-The evaluation metric is the [column-wise ROC](#roc).<br>
-We implemented an explicit keras model (EKM in the following), then also a pre-teined model - DenseNet121 - was used. 
-In order to build a more robust model, we tried/implemented the following techniques (in chronological order):
+As one could have resonably expected given such a high dimensionality, the dataset is not linearly separable. 
 
-1. Class balancing with SMOTE.
-2. Data augmentation with keras ImageDataGenerator.
-3. Some fine-tuning/exploration of the models' layers and parameters, in particular e dropout layer (EKM only), Early Stopping (DenseNet121 only), learning rate scheduling ( DenseNet121 only).
-4. An attempt to put a convolutional autoencoder autoencoder between point 2 and point 3.
-
-Secondary information may be found in the [Appendix](#appendix).
-
-# Class Balancing with `SMOTE`
-
-`SMOTE(sampling_strategy,k_neighbors)` is a class balancing algorithm that operates as follows: (one of) the minority class(es) is considered, a random point from it is picked and its first `n_neighbors` nearest neighbors are found. One of the latters is then randomly selected, and the the vector between this point and the originally selected point is drawn. This vector gets then multiplied by a number between 0 and 1, and the resulting synthetic point is added to the dataset. <br>
-There exist many variants of **SMOTE**, so besides the standard one also the **SVMSMOTE** and **ADASYN** have been tried. <br>
-**SVMSMOTE** is a variant of **SMOTE** that first of all fits an SVM on the data, and uses its support vectors to identify points more prone to misclassification (i.e. those on the border of the class cluster): these points are later oversampled more than the others.<br>
-**ADASYN** instead draws from a distribution over the minority class(es) that is pointwise inversely proportional to their density. That is, more points are generated where the minority class(es) are sparser, and less points where they are more dense.<br>
-Anyway, the class balancing algorithm that ultimately performed better is baseline **SMOTE**,  with some fine tuning on the `sampling_strategy`( the `all` value means that all classes are resampled to match the size of the majority class), and the `n_neighbors` parameters. See [Platform limitations](#limitations)
-
-# Data Augmentation with Keras `ImageDataGenerator`
-Click the following link for an introduction to [keras Image preprocessing API](https://keras.io/api/preprocessing/image/). Using Keras' ImageDataGenerator, after a manual inspection of the images, we founfd that the best data augmentin technique consisted in a random planar rotation, mixed with random horizontal flip.
-
-# Description of Models' Architecture
-
-* Some fine-tuning/exploration of the models' layers and parameters, in particular a dropout layer (EKM only) 
-* learning rate scheduling (DenseNet121 only)
-* optimizer variations (EKM)
-
-The explorations reported in the title of this section have been performed. We couldn't implement Early Stopping in the EKM model, as fluctuation in either validation loss, categorical accuracy and row-wose ROC where too high to set proper `min_delta` and `patience` parameters in [TensorFlow's Early Stopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping) implementation. (We also explored some optimizers) *(Visto che l'early stopping di tensorflow non va, usiamo quello manuale già implementato? Quali altri optimizers abbiamo provato? Abbiamo una submission per questi?)*.
-The manual implementations of the dropout and early stopping acted simultaneoulsy, so they performed like a grid search. The dropout and epoch values corresponding to the best column-wise ROC were saved and used during testing phase.
-
-```{r eval=FALSE, include=FALSE}
-#![Learning rate schedule](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/LearningRateSchedule.png)
-```
+Later in the report we will describe an attempt using a [convolutional autoencoder](#ae), while in the next section we can verify the amplification of the classes performed by `SMOTE` and recognize the clustering of the generated points.  
 
 
-# Attempt to Insert a Convolutional Autoencoder 
+## **Methods** {#methods}
 
-Despite the multiple configurations tried, the best we could get is a $0.7$ column-wise ROC. The reason behind it could be the fact that on one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reductions, while on the other hand even a single bidimensonal maxpooling caused the output image to be too little for last EKM layer to classify. See [Platform limitations](#limitations) and see [Model architecture](#model-architecture) . The only way way we managed to at least run it was to build a very shallow autoencoder (just a couple of layers besides the input and the output), with the result  that the loss didn't decrease much. 
-Anyway, inspired by the work of others and by some trial and error,  we had a chance to collect some architectural criteria to build an convolutional autoencoder that at least learns.  The folowing  is to be intended as an empirical recipe, with no or little theoretical foundation of the reasons behind its ingredients. The autoencoder is divided in an encoder and a decoder. The encoder should of course start with an input layer, followed by some blocks of Conv2D and Pooling layers (in our case it was MaxPooling2D). Deeper layers should have decreasing filter numbers (for images as big as ours, a range from 64 to 32 should work). The decoder should start with a specular copy of the encoder, where Conv2D layers are substituted by Conv2DTranspose,Pooling by UpSampling. The decoder shall then have as its last two layers  a BatchNormalization layer and  Conv2DTranspose with 3 filters (in order to be able to compare output with input) activated by a sigmoid (this explains the BatchNormalization layer). The unknown numner of Conv2D-pooling blocks in the encoder (that determines the number of Conv2DTranspose-UpSampling in the decoder) has to be jointly concocted with the number of Conv2D-pooling layers of the network (see [Model Architecture](#model-architecture))
+### Class Balancing with `SMOTE` {#smote}
+
+`SMOTE(sampling_strategy, k_neighbors)` is a class balancing algorithm that operates as follows:
+
+1. (one of) the minority class(es) is considered ;
+1. a point is randomly chosen and its first `n_neighbors` nearest neighbors are found ;
+1. one of those nearest neighbors is then randomly selected, and the vector between this point and the originally selected point is drawn ;
+1. this vector is multiplied by a number between 0 and 1, and the resulting synthetic point is added to the dataset. 
+
+Besides the baseline variant, `SVMSMOTE` and `ADASYN` have been tested too: 
+
+* `SVMSMOTE` starts by fitting an SVM on the data, identifies the points which are more prone to mis-classification (i.e. those on the border of the class cluster) via its support vectors and then will oversample those points more than the others.
+* `ADASYN` instead draws from a distribution over the minority class(es) that is pointwise inversely proportional to their density, so that more points are generated where the minority class(es) are sparser, and less points where they are more dense.
+
+We have obtained the best performance applying baseline `SMOTE` with some fine-tuning on the `sampling_strategy` ^[The value `all` means that all classes are resampled to match the size of the majority class.] and the `n_neighbors` parameters. For more details see [Platform Limitations](#platform-limitations).
+
+### Data Augmentation with Keras `ImageDataGenerator` {#data-generator}
+
+We have adopted the Keras `ImageDataGenerator` and, after a manual inspection of the images, we found that the best data augmentation technique was a random planar rotation combined with random horizontal flip. ^[For further information read the [Keras image pre-processing API](https://keras.io/api/preprocessing/image/).]
+
+### Model Architecture Exploration {#exploration}
+
+We have implemented an extensive exploration of all models and here is reported the **grid search** that achieved the best performance:
+
+1. some exploration and fine-tuning of the layers and parameters of the models (i.p. a dropout layer for the `EKM` only) ;
+1. variations of the optimizer (for the `EKM` only) ;
+1. optimal dropout and epoch number search ;
+1. checkpointing .
+
+We couldn't implement **early stopping** both in `EKM` and `DenseNet121`, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to properly set the `min_delta` and `patience` parameters in the [TensorFlow implementation](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping). 
+
+The best choice of the optimizer for the `EKM` proved to be the `RMSprop`, while the standard `adam` performed pretty well with the `DenseNet121`. The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. The dropout, epoch values and weight corresponding to the highest mean column-wise ROC AUC were saved and used during the testing phase. 
+
+Then, in order to establish the quantitative impact of stocasticity in the initialization of the weights on `EKM`, an `EKM1` with the best drop is trained and validated, and the best epochs of `EKM` and `EKM1` are compared. There was a small difference, therefore we decided to make three submissions: one with the baseline `EKM` re-trained on all the data and with the best drop, one with `EKM1` and one with the `DenseNet121`. 
+
+Besides fluctuations, we have noticed that the `DenseNet121` tends to reach higher submission scores. See [Training Histories](#training-histories). 
+
+### Convolutional Autoencoder {#ae}
+
+The best we could achieve by inserting a covolutional autoencoder between the smoted data, augmented data and the model training is a $0.7$ mean column-wise ROC AUC, despite the large number of the configurations that have been tried. The reason behind this relatively poor performance could be that on the one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reduction, while on the other hand even a single bidimensonal maxpooling caused the output image to be too little for the last `EKM` layer to classify. See [Platform limitations](#limitations) and [Model Architecture Exploration](#model-architecture). 
+
+The only way way we have managed to run it and see at least some loss drop was to build a very shallow autoencoder (i.e. just a couple of layers besides the input and the output), with the result that the loss didn't decrease significantly. Anyway, inspired by the work of others and by some active trial and error,  we have had a chance to collect some architectural criteria to build a convolutional autoencoder that at least exhibits learning. The following is to be intended as an empirical recipe, with no or little theoretical foundation supporting the choice of its ingredients. 
+
+The autoencoder is composed of an encoder and a decoder. Obviously the encoder should start with an `input` layer, followed by some blocks of `Conv2D` and `Pooling` layers. Deeper layers should have decreasing filter numbers (for images as big as ours, a range from 64 to 32 should work). The decoder should start with a specular copy of the encoder, where `Conv2D` layers are substituted by `Conv2DTranspose` and `Pooling` by `UpSampling`. Then the last two layers of the decoder should be a `BatchNormalization` layer and `Conv2DTranspose` with 3 filters (in order to be able to compare output with input) activated by a sigmoid (which explains the `BatchNormalization layer`). The unknown number of `Conv2D`-`Pooling` blocks in the encoder (that determines the number of `Conv2DTranspose`-`UpSampling` in the decoder) has to be jointly connected with the number of `Conv2D`-`Pooling` layers of the network. See [Model Architecture](#model-architecture).
 
 
-![](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/AE.png)
+### Selected Model Architecture {#model-architecture}
+
+Some online resaerch and active trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset-dependent model for image classification. 
+
+Obviously the network should start with a `input` layer, followed by blocks of `Conv2D`-`Pooling`^[`MaxPooling` in our case.] layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c$ channels) where $n$ is of the order of units. Then this should be followed by 1-2 dense layers, and a final dense classifier layer. If the classification is binary (sigmoid), then the last layer should be preceeded by a `BatchNormalization` layer.
+
+## **Results**
+
+The performance of the models has been evaluated on **mean column-wise ROC AUC**: 0.972 for `DenseNet121` and 0.937 for `EKM`.
+
+## **Conclusions**
+
+Since the optimal epoch number varies with the size of training dataset, a possible third attempt to obtain it would have seen the best epoch number to use in the testing phase, when the model is re-trained on all training data, extrapolated from a `(best-epoch, training-set-size)` plot (given that stocasticity has not been relevant). 
+
+This has been practically impossible for us because of two main reasons: technical difficulty in  combining Sci-kit learning curves with a Keras model necessarily trained with generators, and [platform limitations](#limitations). Those limitations prevented us from instantiating a single `Pipeline` object integrating all the elements (`SMOTE`, `ImageDataGenerator`, `Model`): this could have allowed us to perform a more extensive and reliable^[If coupled with *cross validation* instead of 80%-20% splitting.] grid search. Finally, as we have already mentioned, those computational limitations  prevented us from implementing an effective convolutional autoencoder: if we used the full-sized images, the autoencoder may have been deeper and that could have plausibly yielded a better performance.
+
+## **References**
+
+1. [Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees](https://www.kaggle.com/c/plant-pathology-2020-fgvc7), *Kaggle* (2020). 
+1. Ranjita Thapa et al. [The Plant Pathology 2020 challenge dataset to classify foliar disease of apples](https://arxiv.org/abs/2004.11958), *arXiv pre-print* (2020). 
+1. Gao Huang et al. [Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993), *arXiv pre-print* (2018). 
+
+## **Appendix**
+
+### Related Material {#additional-material}
+
+* Explore the [GitHub repository](https://github.com/InPhyT/NeuralNetworksProject) of the project.
+* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/notebook.ipynb).
+* Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
 
 
-# Appendix {.unnumbered}
+### Platform Limitations {#platform-limitations}
 
-### Column-wise ROC {#roc}
-From [Challenge Overview](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation) on Kaggle:
->Submissions are evaluated on mean column-wise ROC AUC. In other words, the score is the average of the individual AUCs of each predicted column
-
-### Platform Limitations {#limitations}
-The newest unstable version of TensorFlow with GPU support is needed to run the code. Unfortunately, we haven't been able to set proper kernels up on our local machines, so we had to rely on publicly available cloud interactive environments like [Kaggle](https://www.kaggle.com/), that provided free out of the box kernels for our purposes. The only limitations are in terms of cpu RAM, which forced us to downsize the images to about $200*200$ pixels.
-
-### Model Architecture {#model-arcitecture}
-Some online resaerch and trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset dependent model for image classifcation tasks. the network should of course start with a Input layer, followed by blocks of Conv2D-Pooling (MaxPooling in our case) layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c \, \,$ channels) where $n$ is of the order of units. This should be then followed by $1-2$ dense layers, and a final dense classifier layer. If The classification is binary (sigmoid), then the last layer should be preceeded by a BatchNormlization layer.
-
-![](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/BaseNet.png)
+Since the last unstable version of GPU-supported TensorFlow is required to run the code and we haven't been able to set the proper kernels up on our local machines, we have been constrained to rely on a publicly available cloud interactive environment like *Kaggle*, which provided free out of the box kernels for our purposes. The only limitations are in terms of CPU RAM, which forced us to downsize the images to about 200 $\times$ 200 pixels.
 
 ### Visualization
 
-#### PCA
-
-```{r}
-
-# 
-# ![Truncated SVD](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/TruncatedSVD.png)
-# ![PCA 1](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/PCA1.png)
-# ![PCA 200](/Users/pietromonticone/github/NeuralNetworksProject/Report/Images/PCA200.png)
+```{r input-images, echo=FALSE, fig.align='center', fig.cap="Sample of training images.", fig.width=100, fig.height=40, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(knitr)
+include_graphics("Images/InputImages.png")
 ```
 
 
-#### Convolutional Filters and Features Maps
+```{r pre-smote, echo=FALSE, fig.align='center', fig.cap = "Pre-`SMOTE` truncated SVD.", fid.width=450, fid.height=450, message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TruncatedSVD_preSMOTE.png")
+```
 
-# References
+```{r post-smote, echo=FALSE, fig.align='center', fig.cap="Post-`SMOTE` truncated SVD.", fid.width=450, fid.height=450, message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TruncatedSVD_postSMOTE.png")
+```
+```{r ae, echo=FALSE, fig.align='center', fig.cap='Schematic representation of the convolutional autoencoder.', fid.width=350, fid.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/AEShort.png")
+```
+```{r basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE 5.** Schematic representation of the selected model architecture.', fid.width=350, fid.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+include_graphics("Images/BaseNetShort.png")
+```
+```{r confusion-matrices, echo=FALSE, fig.align='center', fig.cap='**FIGURE 6.** Confusion matrices of `EKM` (left) and `DenseNet121` (right).', fid.width=800, fid.height=550, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(cowplot)
+library(ggplot2)
+
+p1 <- ggdraw() + draw_image("Images/ConfusionMatrixDenseNet121.png")
+p2 <- ggdraw() + draw_image("Images/ConfusionMatrixEKM.png")
+
+plot_grid(p1, p2)
+```
+
+
+#### *PCA* {#pca}
+
+```{r pca1, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 7.** The first ten principal directions of the PCA.", fid.width=800, fid.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/PCA1.png")
+```
+```{r pca200, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 8.** Directions 200-210 of the PCA.",  fid.width=800, fid.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/PCA200.png")
+```
+```{r variance, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 9.** Explained Variance.",  fid.width=550, fid.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/ExplainedVariance90.png")
+```
+
+#### *Training Histories* {#training-histories}
+
+```{r ekm-training, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 10.** Training history of the `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TrainingHistoryEKM.png")
+```
+```{r ekm1-training, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 11.** Training history of the `EKM1`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TrainingHistoryComparison.png")
+```
+```{r densenet-training, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 12.** Training history of the `DenseNet121`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TrainingHistoryDenseNet121.png")
+```
+
+#### *Filters and Activation Maps* {#filters-featuremaps}
+
+```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Three channels with some of the first 3x3 filters of the first hidden layer of the `EKM`.", fid.width=550, fid.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FiltersEKM.png")
+```
+
+```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps of the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps2.png")
+```
+```{r maps6, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps of the sixth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps6.png")
+```
+```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps of the ninth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps9.png")
+```
+

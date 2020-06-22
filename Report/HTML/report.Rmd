@@ -31,7 +31,7 @@ setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone
 
 ### **Abstract** 
 
-We have attended the Kaggle challange *Plant Pathology 2020 - FGVC7*. In this effort we have trained a convolutional neural network model with the given training dataset to classify testing images into different disease categories. During the training phase we have adopted class balancing, data augmentation, optimal dropout, epoch grid searching and, wherever possible, we have also manually fine-tuned the auxiliary elements of the pipeline. The SVD decomposition of the dataset, the convolutional filters and activation maps have been visualized. We have ultimately achieved a mean column-wise ROC AUC of 0.937 applying `EKM`, a relatively shallow CNN defined and trained from scratch, and 0.972 applying the pre-trained Keras model `DenseNet121`. The latter is a convolutional network which main feature relies on the connection between layers that are non contiguous. So the output of the first layer is the input not only of the second layer but also the third, fourth etc. This mechanism allows for feature reutilization, which ultimately improves performance.  
+We have attended the Kaggle challange *Plant Pathology 2020 - FGVC7*. In this effort we have trained a convolutional neural network model with the given training dataset to classify testing images into different disease categories. During the training phase we have adopted class balancing, data augmentation, optimal dropout, epoch grid searching and, wherever possible, we have also manually fine-tuned the auxiliary elements of the pipeline. The SVD decomposition of the dataset, the convolutional filters and activation maps have been visualized. We have ultimately achieved a mean column-wise ROC AUC of 0.937 applying `EKM`, a relatively shallow CNN defined and trained from scratch, and 0.972 applying the pre-trained Keras model `DenseNet121`, a CNN whose main feature relies on the connection between layers that are non contiguous (i.e. the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.  
 
 ## **Problem**
 
@@ -48,7 +48,7 @@ Altough a leaf labeled as `multiple_diseases` could be affected by a variety of 
 include_graphics("Images/InputImages.png")
 ```
 
-Although we have ultimately decided not to apply the **PCA** to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance. As we can appreciate in the figures reported in the [Appendix](#pca), the principal components with lower retained variance correspond to almost pure noise and from the retained variance assesment (using the criterion of 90% variance retention) we have obtained 429 components.
+Even if we have ultimately decided not to apply the **PCA** to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance. As we can appreciate in the figures reported in the [Appendix](#pca), the principal components with lower retained variance correspond to almost pure noise and from the retained variance assesment (using the criterion of 90% variance retention) we have obtained 429 components.
 
 Here instead we visualize the first two principal components of a **truncated SVD** to qualitatively investigate the linear separability of the dataset ^[**Assumption**: if the dataset is linearly separable, the direction along which which the classes diverge is one of the principal components  with larger retained variance, otherwise the noise would be greater than the signal.]. 
 
@@ -98,34 +98,30 @@ We have implemented an extensive exploration of all models and here is reported 
 
 We couldn't implement **early stopping** both in `EKM` and `DenseNet121`, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to properly set the `min_delta` and `patience` parameters in the [TensorFlow implementation](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping). 
 
-The best choice of the optimizer for the `EKM` proved to be the `RMSprop`, while the standard `adam` performed pretty well with the `DenseNet121`.
+The best choice of the optimizer for the `EKM` proved to be the `RMSprop`, while the standard `adam` performed pretty well with the `DenseNet121`. The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. The dropout, epoch values and weight corresponding to the highest mean column-wise ROC AUC were saved and used during the testing phase. 
 
-The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. 
+Then, in order to establish the quantitative impact of stocasticity in the initialization of the weights on `EKM`, an `EKM1` with the best drop is trained and validated, and the best epochs of `EKM` and `EKM1` are compared. There was a small difference, therefore we decided to make three submissions: one with the baseline `EKM` re-trained on all the data and with the best drop, one with `EKM1` and one with the `DenseNet121`. 
 
-The dropout, epoch values and weight corresponding to the highest mean column-wise ROC AUC were saved and used during testing phase. 
-
-Later, in order to establish the quantitative impact of stocasticity in weights initialization on the `EKM`, an EKM model with the best drop is trained and validated, and the best epochs of this model and its analogon trained and validated previously are compared: there was a small difference, so we decided to make three submissions: one with the baseline model re-trained on all data and with th best drop, one with a model formed from the bst weights founfd before, and one with the DenseNet. 
-
-Besides fluctuatios, we noticed that the DenseNet tends to occasionally reach higher submission scores. 
-
+Besides fluctuations, we have noticed that the `DenseNet121` tends to reach higher submission scores. See [Training Histories](#training-histories). 
 
 ### Convolutional Autoencoder {#ae}
 
+The best we could achieve by inserting a covolutional autoencoder between the smoted data, augmented data and the model training is a $0.7$ mean column-wise ROC AUC, despite the large number of the configurations that have been tried. The reason behind this relatively poor performance could be that on the one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reduction, while on the other hand even a single bidimensonal maxpooling caused the output image to be too little for the last `EKM` layer to classify. See [Platform limitations](#limitations) and [Model Architecture Exploration](#model-architecture). 
 
-Putting a Covolutional Autoencoder between the Smoted & augmented data and the model training, despite the multiple configurations tried, the best we could get is a $0.7$ column-averaged ROC. The reason behind it could be the fact that on one hand an autoencoder with no pooling on the encoder side makes little sense in terms of dimensionality reductions, while on the other hand even a single bidimensonal maxpooling caused the output image to be too little for last EKM layer to classify. See [Platform limitations](#limitations) and see [Model architecture](#model-architecture) . 
+The only way way we have managed to run it and see at least some loss drop was to build a very shallow autoencoder (i.e. just a couple of layers besides the input and the output), with the result that the loss didn't decrease significantly. Anyway, inspired by the work of others and by some active trial and error,  we have had a chance to collect some architectural criteria to build a convolutional autoencoder that at least exhibits learning. The following is to be intended as an empirical recipe, with no or little theoretical foundation supporting the choice of its ingredients. 
 
-The only way way we managed to at least run it and see some loss drop was to build a very shallow autoencoder (just a couple of layers besides the input and the output), with the result  that the loss didn't decrease much.
-Anyway, inspired by the work of others and by some trial and error,  we had a chance to collect some architectural criteria to build an convolutional autoencoder that at least learns.  The folowing  is to be intended as an empirical recipe, with no or little theoretical foundation of the reasons behind its ingredients. The autoencoder is divided in an encoder and a decoder. The encoder should of course start with an input layer, followed by some blocks of Conv2D and Pooling layers (in our case it was MaxPooling2D). Deeper layers should have decreasing filter numbers (for images as big as ours, a range from 64 to 32 should work). The decoder should start with a specular copy of the encoder, where Conv2D layers are substituted by Conv2DTranspose,Pooling by UpSampling. The decoder shall then have as its last two layers  a BatchNormalization layer and  Conv2DTranspose with 3 filters (in order to be able to compare output with input) activated by a sigmoid (this explains the BatchNormalization layer). The unknown numner of Conv2D-pooling blocks in the encoder (that determines the number of Conv2DTranspose-UpSampling in the decoder) has to be jointly concocted with the number of Conv2D-pooling layers of the network (see [Model Architecture](#model-architecture)).
+The autoencoder is composed of an encoder and a decoder. Obviously the encoder should start with an `input` layer, followed by some blocks of `Conv2D` and `Pooling` layers. Deeper layers should have decreasing filter numbers (for images as big as ours, a range from 64 to 32 should work). The decoder should start with a specular copy of the encoder, where `Conv2D` layers are substituted by `Conv2DTranspose` and `Pooling` by `UpSampling`. Then the last two layers of the decoder should be a `BatchNormalization` layer and `Conv2DTranspose` with 3 filters (in order to be able to compare output with input) activated by a sigmoid (which explains the `BatchNormalization layer`). The unknown number of `Conv2D`-`Pooling` blocks in the encoder (that determines the number of `Conv2DTranspose`-`UpSampling` in the decoder) has to be jointly connected with the number of `Conv2D`-`Pooling` layers of the network. See [Model Architecture](#model-architecture).
 
 
 ```{r ae, echo=FALSE, fig.align='center', fig.cap='**FIGURE 4.** Schematic representation of the convolutional autoencoder.', out.width=350, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/AEShort.png")
 ```
 
+### Selected Model Architecture {#model-architecture}
 
-### Selected Model Architecture {#model-arcitecture}
+Some online resaerch and active trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset-dependent model for image classification. 
 
-Some online resaerch and trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset dependent model for image classifcation tasks. the network should of course start with a Input layer, followed by blocks of Conv2D-Pooling (MaxPooling in our case) layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c \, \,$ channels) where $n$ is of the order of units. This should be then followed by $1-2$ dense layers, and a final dense classifier layer. If The classification is binary (sigmoid), then the last layer should be preceeded by a BatchNormlization layer.
+Obviously the network should start with a `input` layer, followed by blocks of `Conv2D`-`Pooling`^[`MaxPooling` in our case.] layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c$ channels) where $n$ is of the order of units. Then this should be followed by 1-2 dense layers, and a final dense classifier layer. If the classification is binary (sigmoid), then the last layer should be preceeded by a `BatchNormalization` layer.
 
 ```{r basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE 5.** Schematic representation of the selected model architecture.', out.width=350, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -147,11 +143,9 @@ plot_grid(p1, p2)
 
 ## **Conclusions**
 
-Considering the fact that optimal epoch number varies with trains et size, a possible third attempt to determine it would have seen the best epoch number to use in test phase, when the model is retrained on all train data, extrapolated from a (best-epoch) vs (training set size) plot (given stocasticity was not relevant), but this has unfortunately been impossible due to two reasons:  a techinical difficulty in combining scikit's Leraning curves with a era smodel necessarily trained with generators, and platform RAM limitations.
+Since the optimal epoch number varies with the size of training dataset, a possible third attempt to obtain it would have seen the best epoch number to use in the testing phase, when the model is re-trained on all training data, extrapolated from a `(best-epoch, training-set-size)` plot (given that stocasticity has not been relevant). 
 
-The same limitations prevented us from us from instantiating a single Pipeline object with all the elements in it (SMOTE, ImageDataGenerator, Model):this could have allowed us to perform a more extensive grid search (and also more reliable, if coupled with cross valiudation instead of $80%-20%$ splitting)
-
-Finally, as altrady mentioned, we have been prevented us from implementing an effective convolutional autoencoder: could we use the full-sized images, the autoencoder may have been deeper thus resulting in a (possible) better performance.
+This has been practically impossible for us because of two main reasons: technical difficulty in  combining Sci-kit learning curves with a Keras model necessarily trained with generators, and [platform limitations](#limitations). Those limitations prevented us from instantiating a single `Pipeline` object integrating all the elements (`SMOTE`, `ImageDataGenerator`, `Model`): this could have allowed us to perform a more extensive and reliable^[If coupled with *cross validation* instead of 80%-20% splitting.] grid search. Finally, as we have already mentioned, those computational limitations  prevented us from implementing an effective convolutional autoencoder: if we used the full-sized images, the autoencoder may have been deeper and that could have plausibly yielded a better performance.
 
 ## **References**
 
@@ -186,16 +180,28 @@ include_graphics("Images/PCA200.png")
 include_graphics("Images/ExplainedVariance90.png")
 ```
 
+#### *Training Histories* {#training-histories}
+
+```{r ekm-training, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 10.** Training history of the `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TrainingHistoryEKM.png")
+```
+```{r ekm1-training, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 11.** Training history of the `EKM1`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TrainingHistoryComparison.png")
+```
+```{r densenet-training, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 12.** Training history of the `DenseNet121`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/TrainingHistoryDenseNet121.png")
+```
+
 #### *Filters and Activation Maps* {#filters-featuremaps}
 
-```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 10.** Three channels with some of the first 3x3 filters of the `EKM`.", out.width=550, out.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Three channels with some of the first 3x3 filters of the first hidden layer of the `EKM`.", out.width=550, out.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FiltersEKM.png")
 ```
 
-```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 11.** Activation maps of the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps of the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps2.png")
 ```
-```{r maps6, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 12.** Activation maps of the sixth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps6, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps of the sixth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps6.png")
 ```
 ```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps of the ninth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
