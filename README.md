@@ -15,19 +15,19 @@
 
 <!-- Title -->
 <h1 align="center">
-  Dataset Analysis and CNN Models Optimization for Plant Disease Classification 
+  Neural Networks Project
 </h1>
 
 <!-- Subtitle -->
 <h3 align="center">
-  Recognition of Foliar Diseases Categories in Apple Trees
+  Dataset Analysis and CNN Models Optimization for Plant Disease Classification 
 </h3>
 
 <!-- Badges -->
 </p>
 
 <p align="center">
-  <a href="">
+  <a href="https://www.kaggle.com/inphyt2020/neuralnetworksproject">
     <img alt="Kaggle" src="https://kaggle.com/static/images/open-in-kaggle.svg">
   </a>
   <a href="https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/">
@@ -41,11 +41,11 @@
 
 ## How to Explore this Project
 
-* Read the report in [PDF](https://github.com/InPhyT/NeuralNetworksProject/Report/report.pdf) or [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html).
+* Read the report in [PDF](https://github.com/InPhyT/NeuralNetworksProject/Report/report.pdf) or [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) format.
 
 * Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/notebook.ipynb).
 
-* Run the code in the [Kaggle notebook]().
+* Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
 
 
 ## Extended Abstract
@@ -67,7 +67,7 @@ Submissions are evaluated on [mean column-wise ROC AUC](https://www.kaggle.com/c
 
 ### Data 
 
-Both the training and the testing [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy` ($h$), `multiple_diseases` ($m$), `rust` ($r$), `scab` ($s$). 
+Both the training and the testing [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy`, `multiple_diseases`, `rust`, `scab`. 
 
 ### Methods
 
