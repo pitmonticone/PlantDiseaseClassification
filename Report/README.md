@@ -1,5 +1,4 @@
-# Convolutional Neural Network for Plant Disease Classification 
-
+# "Dataset Analysis and CNN Models Optimization for Plant Disease Classification" 
 
 ### Problem 
 Misdiagnosis of the many diseases impacting agricultural crops can lead to misuse of chemicals leading to the emergence of resistant pathogen strains, increased input costs, and more outbreaks with significant economic loss and environmental impacts. Current disease diagnosis based on human scouting is time-consuming and expensive, and although computer-vision based models have the promise to increase efficiency, the great variance in symptoms due to age of infected tissues, genetic variations, and light conditions within trees decreases the accuracy of detection.
@@ -18,11 +17,8 @@ Submissions are evaluated on [mean column-wise ROC AUC](https://www.kaggle.com/c
 
 Both the training and the test [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases, with variable illumination, angles, surfaces, and noise have been manually captured, expert-annotated to create a pilot dataset for apple scab, cedar apple rust, and healthy leaves. 
 
-We found no indication that "multiple_diseases" refers to both "rust" and "scab", it just seems to indicate the presence of other different kinds of illnesses.
-
-
 ### Solution 
-In this project we have trained a convolutional neural network and apply the following methods
+In this project we have trained a convolutional neural network and applied the following methods
 
 1. Class balancing with [SMOTE](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
 1. Data augmentation with [Keras ImageDataGenerator](https://keras.io/api/preprocessing/image/)
