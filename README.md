@@ -15,12 +15,12 @@
 
 <!-- Title -->
 <h1 align="center">
-  Dataset Analysis and CNN Models Optimization for Plant Disease Classification 
+  Neural Networks Project
 </h1>
 
 <!-- Subtitle -->
 <h3 align="center">
-  Recognition of Foliar Diseases Categories in Apple Trees
+  Dataset Analysis and CNN Models Optimization for Plant Disease Classification 
 </h3>
 
 <!-- Badges -->
