@@ -67,8 +67,6 @@ Submissions are evaluated on [mean column-wise ROC AUC](https://www.kaggle.com/c
 
 Both the training and the test [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases, with variable illumination, angles, surfaces, and noise have been manually captured, expert-annotated to create a pilot dataset for apple scab, cedar apple rust, and healthy leaves. 
 
-We found no indication that "multiple_diseases" refers to both "rust" and "scab", it just seems to indicate the presence of other different kinds of illnesses.
-
 
 ### Solution 
 In this project we have trained a convolutional neural network and apply the following methods
@@ -84,8 +82,8 @@ Auxiliary elements of the pipeline (e.g. SMOTE) have been manually fine tuned.
 
 ### Results 
 
-* **ROC = 0.956** applying the Keras pre-trained model [DenseNet121](https://keras.io/api/applications/densenet/#densenet121-function);
-* **ROC = 0.915** applying a CNN which has been defined and trained from scratch. 
+* **ROC = 0.972** applying the Keras pre-trained model [DenseNet121](https://keras.io/api/applications/densenet/#densenet121-function);
+* **ROC = 0.937** applying a CNN which has been defined and trained from scratch. 
 
 ### References 
 1. [Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees](https://www.kaggle.com/c/plant-pathology-2020-fgvc7), *Kaggle* (2020). 
