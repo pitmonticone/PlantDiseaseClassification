@@ -39,15 +39,13 @@ Both the training and the testing datasets are composed of 1821 high-quality, re
 Altough a leaf labeled as `multiple_diseases` could be affected by a variety of diseases including rust, scab or both, we treated the classes as mutually exclusive because there is no taxonomy: in principle the model should distinguish between all four classes, as none of them is an abstraction of any of the others. The dataset is not balanced, but distributed as follows $(h = 516, m = 91, r = 622, s = 592)$. 
 
 
-```{r input-images, echo=FALSE, fig.align='center', fig.cap="**FIGURE 1.** Sample of training images.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r input-images, echo=FALSE, fig.align='center', fig.cap="**FIGURE 1.** Sample of training images.", out.width=800, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/InputImages.png")
 ```
 
-
-
 Here we visualize the first two principal components of a [truncated SVD](#pca) to qualitatively investigate the linear separability of the dataset ^[**Assumption**: if the dataset is linearly separable, the direction along which which the classes diverge is one of the principal components  with larger retained variance, otherwise the noise would be greater than the signal.]. 
 
-```{r pre-smote, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 2.** Pre-`SMOTE` truncated SVD.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r pre-smote, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 2.** Pre-`SMOTE` truncated SVD.", out.width=450, out.height=450, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/TruncatedSVD_preSMOTE.png")
 ```
 
@@ -74,7 +72,7 @@ Besides the baseline variant, `SVMSMOTE` and `ADASYN` have been tried too:
 
 The best perfomance was obtained with baseline `SMOTE`, with some fine-tuning on the `sampling_strategy` ^[The value `all` means that all classes are resampled to match the size of the majority class.] and the `n_neighbors` parameters. For further details see [Platform Limitations](#platform-limitations).
 
-```{r post-smote, echo=FALSE, fig.align='center', fig.cap="**FIGURE 3.** Post-`SMOTE` truncated SVD.", fig.width=200, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r post-smote, echo=FALSE, fig.align='center', fig.cap="**FIGURE 3.** Post-`SMOTE` truncated SVD.", out.width=450, out.height=450, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/TruncatedSVD_postSMOTE.png")
 ```
 
@@ -95,11 +93,6 @@ We couldn't implement Early Stopping both in the EKM model and the DenseNet, as 
 The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. The dropout, epoch values and weight corresponding to the best column-averaged ROC were saved and used during testing phase. Later, in order to establish the quantitative impact of stocasticity in weights initialization on the EKM, an EKM model with the best drop is trained and validated, and the best epochs of this model and its analogon trained and validated previously are compared: there was a small difference, so we decided to make three submissions: one with the baseline model re-trained on all data and with th best drop, one with a model formed from the bst weights founfd before, and one with the DenseNet. Besides fluctuatios, we noticed that the DenseNet tends to occasionally reach higher submission scores. 
 Considering the fact that optimal epoch number varies with trains et size, a possible third attempt would have seen the best epoch number to use in test phase, when the model is retrained on all train data, extrapolated from a (best-epoch) vs (training set size) plot (given stocasticity was not relevant), but this has unfortunately been impossible due to two reasons:  a techinical difficulty in combining scikit's Leraning curves with a era smodel necessarily trained with generators, and platform RAM limitations.
 
-
-```{r learning-rate-schedule, echo=FALSE, fig.align='center', fig.cap = "**Figure 2.** Convolutional Autoencoder", message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/LearningRateSchedule.png")
-```
-
 ### Convolutional Autoencoder {#ae}
 
 
@@ -111,7 +104,8 @@ The only way way we managed to at least run it and see some loss drop was to bui
 Anyway, inspired by the work of others and by some trial and error,  we had a chance to collect some architectural criteria to build an convolutional autoencoder that at least learns.  The folowing  is to be intended as an empirical recipe, with no or little theoretical foundation of the reasons behind its ingredients. The autoencoder is divided in an encoder and a decoder. The encoder should of course start with an input layer, followed by some blocks of Conv2D and Pooling layers (in our case it was MaxPooling2D). Deeper layers should have decreasing filter numbers (for images as big as ours, a range from 64 to 32 should work). The decoder should start with a specular copy of the encoder, where Conv2D layers are substituted by Conv2DTranspose,Pooling by UpSampling. The decoder shall then have as its last two layers  a BatchNormalization layer and  Conv2DTranspose with 3 filters (in order to be able to compare output with input) activated by a sigmoid (this explains the BatchNormalization layer). The unknown numner of Conv2D-pooling blocks in the encoder (that determines the number of Conv2DTranspose-UpSampling in the decoder) has to be jointly concocted with the number of Conv2D-pooling layers of the network (see [Model Architecture](#model-architecture))
 
 
-```{r autoencoder, echo=FALSE, fig.align='center', fig.cap = "**Figure.** Convolutional Autoencoder", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r ae, echo=FALSE, fig.align='center', fig.cap='**FIGURE 4.** Schematic representation of the convolutional autoencoder.', out.width=300, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+
 include_graphics("Images/AEShort.png")
 ```
 
@@ -119,16 +113,17 @@ include_graphics("Images/AEShort.png")
 ### Selected Model Architecture {#model-arcitecture}
 Some online resaerch and trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset dependent model for image classifcation tasks. the network should of course start with a Input layer, followed by blocks of Conv2D-Pooling (MaxPooling in our case) layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c \, \,$ channels) where $n$ is of the order of units. This should be then followed by $1-2$ dense layers, and a final dense classifier layer. If The classification is binary (sigmoid), then the last layer should be preceeded by a BatchNormlization layer.
 
-```{r model-architecture, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/BaseNetShort.png") 
+```{r basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE 5.** Schematic representation of the selected model architecture.', out.width=300, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+include_graphics("Images/BaseNetShort.png")
 ```
 
 ## **Results**
 
-The performance of the models has been evaluated on **mean column-wise ROC AUC**: $0.972$ for `DenseNet121` and $0.937$ for `EKM`.
+The performance of the models has been evaluated on **mean column-wise ROC AUC**: 0.972 for `DenseNet121` and 0.937 for `EKM`.
 
 
-```{r confusion-matrices, echo=FALSE, fig.align='center', fig.cap='**FIGURE.** Confusion matrices of `EKM` (left) and `DenseNet121` (right).', message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r confusion-matrices, echo=FALSE, fig.align='center', fig.cap='**FIGURE 6.** Confusion matrices of `EKM` (left) and `DenseNet121` (right).', message=FALSE, warning=FALSE, paged.print=FALSE}
 library(cowplot)
 library(ggplot2)
 
@@ -138,48 +133,65 @@ p2 <- ggdraw() + draw_image("Images/ConfusionMatrixEKM.png")
 plot_grid(p1, p2)
 ```
 
-```{r ae-basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE.** Confusion matrices of `EKM` (left) and `DenseNet121` (right).', fig.width=80, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-include_graphics(c("Images/BaseNetShort.png","Images/AEShort.png"))
-```
-
-## **Appendix**
-
-### Platform Limitations {#platform-limitations}
-
-The newest unstable version of TensorFlow with GPU support is needed to run the code. Unfortunately, we haven't been able to set proper kernels up on our local machines, so we had to rely on publicly available cloud interactive environments like [Kaggle](https://www.kaggle.com/), that provided free out of the box kernels for our purposes. The only limitations are in terms of cpu RAM, which forced us to downsize the images to about $200 \times 200$ pixels.
-
-### Visualization
-
-#### PCA {#pca}
-
-Nonostante si sia poi stabilito di non usare la PCA per la dimensionality reduction del dataset può essere interessante visualizzare le prime dieci direzioni principali e confrontarli qualitativamente con una sequenza di direzioni principali con meno varianza ritenuta. 
-
-
-```{r pca1, echo=FALSE, fig.align='center', fig.cap = "**Figure.** Layer 1-10 of PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/PCA1.png")
-```
-
-```{r pca200, echo=FALSE, fig.align='center', fig.cap = "**Figure.** Layer 200-210 of PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/PCA200.png")
-```
-
-Come prevedibile le direzioni principali con meno varianza, se graficate, corrispondono a quasi puro rumore (si veda il contrasto tra [Fig. M](#pca1) e [Fig. M+1](#pca200) )
-
-Di seguito viene visualizzata l'analisi dell'explained variance dove, utilizzando il criterio di conservazione del 90% della varianza, otteniamo 429 componenti.
-
-```{r variance, echo=FALSE, fig.align='center', fig.cap = "**Figure.** Layer 200-210 of PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/ExplainedVariance90.png")
-```
-
-#### Convolutional Filters and Features Maps {#filters-featuremaps}
-
-```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE.** Three channels with some of the first 3x3 filters of the `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/FiltersEKM.png")
-```
-
-# **References**
+## **References**
 
 1. [Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees](https://www.kaggle.com/c/plant-pathology-2020-fgvc7), *Kaggle* (2020). 
 1. Ranjita Thapa et al. [The Plant Pathology 2020 challenge dataset to classify foliar disease of apples](https://arxiv.org/abs/2004.11958), *arXiv pre-print* (2020). 
 1. Gao Huang et al. [Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993), *arXiv pre-print* (2018). 
+
+## **Appendix**
+
+### Additional Material {#additional-material}
+
+* Explore the [GitHub repository](https://github.com/InPhyT/NeuralNetworksProject) of the project.
+* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/notebook.ipynb).
+* Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
+
+
+### Platform Limitations {#platform-limitations}
+
+Since the last unstable version of GPU-supported TensorFlow is required to run the code and we haven't been able to set the proper kernels up on our local machines, we have been constrained to rely on a publicly available cloud interactive environment like *Kaggle*, which provided free out of the box kernels for our purposes. The only limitations are in terms of CPU RAM, which forced us to downsize the images to about 200 $\times$ 200 pixels.
+
+### Visualization
+
+#### *PCA* {#pca}
+
+Although we have ultimately decided not to apply the PCA to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance.
+
+```{r pca1, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 7.** The first ten principal directions of the PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/PCA1.png")
+```
+```{r pca200, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 8.** Directions 200-210 of the PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/PCA200.png")
+```
+
+As we could have reasonably expected the principal components with lower retained variance correspond to almost pure noise.
+
+Here we plot the explained variance analysis and, using the criterion of 90% variance retention, we have obtained 429 components.
+
+```{r variance, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 9.** Explained Variance.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/ExplainedVariance90.png")
+```
+
+#### *Filters and Activation Maps* {#filters-featuremaps}
+
+**text / simple reference from main text.**
+
+```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 10.** Three channels with some of the first 3x3 filters of the `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FiltersEKM.png")
+```
+
+
+**text / simple reference from main text.**
+
+
+```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 11.** Activation maps of the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps2.png")
+```
+```{r maps6, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 12.** Activation maps of the sixth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps6.png")
+```
+```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps of the ninth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps9.png")
+```
+
