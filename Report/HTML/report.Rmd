@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 	message = FALSE,
 	warning = FALSE
 )
-
 library(knitr)
 
 setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone 
@@ -128,6 +127,10 @@ Obviously the network should start with a `input` layer, followed by blocks of `
 include_graphics("Images/BaseNetShort.png")
 ```
 
+The first convolutional layer of the model uses 3 x 3 filters with depth of 3 ^[Equal to the number of channels of its input.]. Since the visualization of the convolutionl filters within the trained `EKM` might provide insight into how the model works, in [FIGURE 13](#filters-featuremaps) we have represented the first seven of 16/32/64 filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights. 
+
+In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps ^[We should verify that the maps close to the input image detect high-resolution, fine-grained detail, whereas  maps close to the model output extract coarser, more abstract concepts.], in [FIGURE 14](#filters-featuremaps), [15](#filters-featuremaps) and [16](#filters-featuremaps) we visualize a 5 x 5 matrix of subplots showing a sample feature maps extracted from the second, the fifth and the ninth convolutional layer. 
+
 ## **Results**
 
 The performance of the models has been evaluated on **mean column-wise ROC AUC**: 0.972 for `DenseNet121` and 0.937 for `EKM`.
@@ -198,13 +201,18 @@ include_graphics("Images/TrainingHistoryDenseNet121.png")
 include_graphics("Images/FiltersEKM.png")
 ```
 
-```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps of the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/FeatureMaps2.png")
+The activation maps resulting from the application of filters to input images and to the output of maps in prior layers could provide insight into the internal representation that the model has of a specific input at a given point in the model.
+
+```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps extracted from the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps9.png") 
+# PAY ATTENTION: Maps2 is Maps9
 ```
-```{r maps6, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps of the sixth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps5, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps extracted from the sixth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps6.png")
+# PAY ATTENTION: Maps6 is Maps5
 ```
-```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps of the ninth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
-include_graphics("Images/FeatureMaps9.png")
+```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps extracted from the ninth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+include_graphics("Images/FeatureMaps2.png")
+# PAY ATTENTION: Maps9 is Maps2
 ```
 
