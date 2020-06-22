@@ -30,7 +30,7 @@ setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone
 
 ### **Abstract** 
 
-We have attended the Kaggle challange *Plant Pathology 2020 - FGVC7*. In this effort we have trained a convolutional neural network model with the given training dataset to classify testing images into different disease categories. During the training phase we have adopted class balancing, data augmentation, optimal dropout, epoch grid searching and, wherever possible, we have also manually fine-tuned the auxiliary elements of the pipeline. The SVD decomposition of the dataset, the convolutional filters and activation maps have been visualized. We have ultimately achieved a mean column-wise ROC AUC of 0.972 applying the pre-trained Keras model `DenseNet121` and 0.937 applying `EKM`, a relatively shallow CNN defined and trained from scratch .
+We have attended the Kaggle challange *Plant Pathology 2020 - FGVC7*. In this effort we have trained a convolutional neural network model with the given training dataset to classify testing images into different disease categories. During the training phase we have adopted class balancing, data augmentation, optimal dropout, epoch grid searching and, wherever possible, we have also manually fine-tuned the auxiliary elements of the pipeline. The SVD decomposition of the dataset, the convolutional filters and activation maps have been visualized. We have ultimately achieved a mean column-wise ROC AUC of 0.972 applying the pre-trained Keras model `DenseNet121` and 0.937 applying `EKM`, a relatively shallow CNN defined and trained from scratch.
 
 ## **Data**
 
