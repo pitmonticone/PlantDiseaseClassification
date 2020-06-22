@@ -39,12 +39,13 @@ Both the training and the testing datasets are composed of 1821 high-quality, re
 
 Altough a leaf labeled as `multiple_diseases` could be affected by a variety of diseases including rust, scab or both, we treated the classes as mutually exclusive because there is no taxonomy: in principle the model should distinguish between all four classes, as none of them is an abstraction of any of the others. The dataset is not balanced, but distributed as follows $(h = 516, m = 91, r = 622, s = 592)$. 
 
-
 ```{r input-images, echo=FALSE, fig.align='center', fig.cap="**FIGURE 1.** Sample of training images.", out.width=800, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/InputImages.png")
 ```
 
-Here we visualize the first two principal components of a [truncated SVD](#pca) to qualitatively investigate the linear separability of the dataset ^[**Assumption**: if the dataset is linearly separable, the direction along which which the classes diverge is one of the principal components  with larger retained variance, otherwise the noise would be greater than the signal.]. 
+Although we have ultimately decided not to apply the **PCA** to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance. As we can appreciate in the figures reported in the [appendix](#pca), the principal components with lower retained variance correspond to almost pure noise and from the retained variance assesment (using the criterion of 90% variance retention) we have obtained 429 components.
+
+Here instead we visualize the first two principal components of a **truncated SVD** to qualitatively investigate the linear separability of the dataset ^[**Assumption**: if the dataset is linearly separable, the direction along which which the classes diverge is one of the principal components  with larger retained variance, otherwise the noise would be greater than the signal.]. 
 
 ```{r pre-smote, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 2.** Pre-`SMOTE` truncated SVD.", out.width=450, out.height=450, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/TruncatedSVD_preSMOTE.png")
@@ -52,7 +53,7 @@ include_graphics("Images/TruncatedSVD_preSMOTE.png")
 
 As one could have resonably expected given such a high dimensionality, the dataset is not linearly separable. 
 
-Later in the report we will describe an attempt using a [convolutional autoencoder](#ae) while in the next section we can appreciate the amplification of the classes performed by `SMOTE` and recognize the clustering of the generated points.  
+Later in the report we will describe an attempt using a [convolutional autoencoder](#ae), while in the next section we can verify the amplification of the classes performed by `SMOTE` and recognize the clustering of the generated points.  
 
 
 ## **Pipeline and Other Attempts**
@@ -66,12 +67,12 @@ Later in the report we will describe an attempt using a [convolutional autoencod
 1. one of those nearest neighbors is then randomly selected, and the vector between this point and the originally selected point is drawn ;
 1. this vector is multiplied by a number between 0 and 1, and the resulting synthetic point is added to the dataset. 
 
-Besides the baseline variant, `SVMSMOTE` and `ADASYN` have been tried too: 
+Besides the baseline variant, `SVMSMOTE` and `ADASYN` have been tested too: 
 
 * `SVMSMOTE` starts by fitting an SVM on the data, identifies the points which are more prone to mis-classification (i.e. those on the border of the class cluster) via its support vectors and then will oversample those points more than the others.
-* `ADASYN` instead draws from a distribution over the minority class(es) that is pointwise inversely proportional to their density so that more points are generated where the minority class(es) are sparser, and less points where they are more dense.
+* `ADASYN` instead draws from a distribution over the minority class(es) that is pointwise inversely proportional to their density, so that more points are generated where the minority class(es) are sparser, and less points where they are more dense.
 
-The best perfomance was obtained with baseline `SMOTE`, with some fine-tuning on the `sampling_strategy` ^[The value `all` means that all classes are resampled to match the size of the majority class.] and the `n_neighbors` parameters. For further details see [Platform Limitations](#platform-limitations).
+We have obtained the best performance applying baseline `SMOTE` with some fine-tuning on the `sampling_strategy` ^[The value `all` means that all classes are resampled to match the size of the majority class.] and the `n_neighbors` parameters. For more details see [Platform Limitations](#platform-limitations).
 
 ```{r post-smote, echo=FALSE, fig.align='center', fig.cap="**FIGURE 3.** Post-`SMOTE` truncated SVD.", out.width=450, out.height=450, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/TruncatedSVD_postSMOTE.png")
@@ -79,19 +80,29 @@ include_graphics("Images/TruncatedSVD_postSMOTE.png")
 
 #### Data Augmentation with Keras `ImageDataGenerator`
 
-We have adopted the Keras `ImageDataGenerator` and, after a manual inspection of the images, we found that the best data augmentation technique was a random planar rotation combined with random horizontal flip. For more details see the [Keras image pre-processing API](https://keras.io/api/preprocessing/image/).
+We have adopted the Keras `ImageDataGenerator` and, after a manual inspection of the images, we found that the best data augmentation technique was a random planar rotation combined with random horizontal flip. ^[For further information read the [Keras image pre-processing API](https://keras.io/api/preprocessing/image/).]
 
 #### Model Architecture Exploration
 
-An extensve exploration of all models has been performed. here we report the *gridsearch* that ultimately proved to be better.
+We have implemented an extensive exploration of all models and here is reported the **grid search** that achieved the best performance:
 
-* Some fine-tuning/exploration of the models' layers and parameters, in particular a dropout layer (EKM only) 
-* optimizer variations (EKM)
-* optimal dropout and epoch number search
-* checkpointing
+1. some exploration and fine-tuning of the layers and parameters of the models (i.p. a dropout layer for the `EKM` only) 
+1. variations of the optimizer (for the `EKM` only)
+1. optimal dropout and epoch number search
+1. checkpointing
 
-We couldn't implement Early Stopping both in the EKM model and the DenseNet, as fluctuations in either validation loss, categorical accuracy and column-averaged ROC where too high to set proper `min_delta` and `patience` parameters in [TensorFlow's Early Stopping](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping) implementation. With some trial and error, the best optimizer choice for the EKM proved to be the **RMSprop**, while the standard **adam** performed quite well with the DenseNet.
-The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. The dropout, epoch values and weight corresponding to the best column-averaged ROC were saved and used during testing phase. Later, in order to establish the quantitative impact of stocasticity in weights initialization on the EKM, an EKM model with the best drop is trained and validated, and the best epochs of this model and its analogon trained and validated previously are compared: there was a small difference, so we decided to make three submissions: one with the baseline model re-trained on all data and with th best drop, one with a model formed from the bst weights founfd before, and one with the DenseNet. Besides fluctuatios, we noticed that the DenseNet tends to occasionally reach higher submission scores. 
+We couldn't implement **early stopping** both in `EKM` and `DenseNet121`, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to properly set the `min_delta` and `patience` parameters in the [TensorFlow implementation](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping). 
+
+The best choice of the optimizer for the `EKM` proved to be the `RMSprop`, while the standard `adam` performed pretty well with the `DenseNet121`.
+
+The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. 
+
+The dropout, epoch values and weight corresponding to the highest mean column-wise ROC AUC were saved and used during testing phase. 
+
+Later, in order to establish the quantitative impact of stocasticity in weights initialization on the `EKM`, an EKM model with the best drop is trained and validated, and the best epochs of this model and its analogon trained and validated previously are compared: there was a small difference, so we decided to make three submissions: one with the baseline model re-trained on all data and with th best drop, one with a model formed from the bst weights founfd before, and one with the DenseNet. 
+
+Besides fluctuatios, we noticed that the DenseNet tends to occasionally reach higher submission scores. 
+
 Considering the fact that optimal epoch number varies with trains et size, a possible third attempt would have seen the best epoch number to use in test phase, when the model is retrained on all train data, extrapolated from a (best-epoch) vs (training set size) plot (given stocasticity was not relevant), but this has unfortunately been impossible due to two reasons:  a techinical difficulty in combining scikit's Leraning curves with a era smodel necessarily trained with generators, and platform RAM limitations.
 
 ### Convolutional Autoencoder {#ae}
@@ -112,6 +123,7 @@ include_graphics("Images/AEShort.png")
 
 
 ### Selected Model Architecture {#model-arcitecture}
+
 Some online resaerch and trial and error with the network architecture gave us some clues about how to build from scratch an effective, dataset dependent model for image classifcation tasks. the network should of course start with a Input layer, followed by blocks of Conv2D-Pooling (MaxPooling in our case) layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c \, \,$ channels) where $n$ is of the order of units. This should be then followed by $1-2$ dense layers, and a final dense classifier layer. If The classification is binary (sigmoid), then the last layer should be preceeded by a BatchNormlization layer.
 
 ```{r basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE 5.** Schematic representation of the selected model architecture.', out.width=300, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -157,19 +169,12 @@ Since the last unstable version of GPU-supported TensorFlow is required to run t
 
 #### *PCA* {#pca}
 
-Although we have ultimately decided not to apply the PCA to reduce the dimensionality of the dataset, we believe it might be interesting to visualize the first ten principal directions and qualitatively compare them with a sequence of principal directions with lower retained variance.
-
 ```{r pca1, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 7.** The first ten principal directions of the PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/PCA1.png")
 ```
 ```{r pca200, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 8.** Directions 200-210 of the PCA.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/PCA200.png")
 ```
-
-As we could have reasonably expected the principal components with lower retained variance correspond to almost pure noise.
-
-Here we plot the explained variance analysis and, using the criterion of 90% variance retention, we have obtained 429 components.
-
 ```{r variance, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 9.** Explained Variance.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/ExplainedVariance90.png")
 ```
