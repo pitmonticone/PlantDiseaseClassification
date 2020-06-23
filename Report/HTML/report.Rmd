@@ -1,7 +1,7 @@
 ---
 title: "Dataset Analysis and CNN Models Optimization for Plant Disease Classification" 
 subtitle: "Recognition of Foliar Diseases in Apple Trees"
-author: "**Claudio Moroni** | **Davide Orsenigo** | **Pietro Monticone**"
+author: "[**Claudio Moroni**]() | [**Davide Orsenigo**]() | [**Pietro Monticone**]()"
 date: "`r format(Sys.time(), '%d %B %Y')`, *University of Turin*" 
 output: 
   prettydoc::html_pretty:
@@ -155,16 +155,14 @@ This has been practically impossible for us because of two main reasons: technic
 
 1. [Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees](https://www.kaggle.com/c/plant-pathology-2020-fgvc7), *Kaggle* (2020). 
 1. Ranjita Thapa et al. [The Plant Pathology 2020 challenge dataset to classify foliar disease of apples](https://arxiv.org/abs/2004.11958), *arXiv pre-print* (2020). 
-1. Gao Huang et al. [Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993), *arXiv pre-print* (2018). 
 
 ## **Appendix**
 
-### Related Material {#additional-material}
+### Online Contents {#additional-material}
 
 * Explore the [GitHub repository](https://github.com/InPhyT/NeuralNetworksProject) of the project.
 * Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/Notebooks/notebook.ipynb).
 * Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
-
 
 ### Platform Limitations {#platform-limitations}
 
