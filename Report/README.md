@@ -45,8 +45,8 @@ Both the training and the testing [datasets](https://www.kaggle.com/c/plant-path
 
 ### Methods
 
-1. Class balancing with [SMOTE](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
-1. Data augmentation with [Keras ImageDataGenerator](https://keras.io/api/preprocessing/image/)
+1. Class balancing with [`SMOTE`](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
+1. Data augmentation with [Keras `ImageDataGenerator`](https://keras.io/api/preprocessing/image/)
 1. Learning rate schedule
 1. Optimal dropout
 1. Epoch grid search
