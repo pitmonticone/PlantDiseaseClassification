@@ -17,11 +17,11 @@ nofootinbib]{revtex4}
 \title{Dataset Analysis and CNN Models Optimization for Plant Disease
 	Classification}
 \author {D. Orsenigo}
-\email{davide.orsenigo@edu.unito.it}
+\thanks{davide.orsenigo@edu.unito.it}
 \author {C. Moroni}
-\email{claudio.moroni@edu.unito.it}
+\thanks{claudio.moroni@edu.unito.it}
 \author {P. Monticone}
-\email{pietro.monticone@edu.unito.it}
+\thanks{pietro.monticone@edu.unito.it}
 \affiliation    {University of Turin}
 
 \date{23 June 2020}
@@ -74,7 +74,7 @@ reduce the dimensionality of the dataset, we believe it might be
 interesting to visualize the first ten principal directions and
 qualitatively compare them with a sequence of principal directions with
 lower retained variance. As we can appreciate in the figures reported in
-the \ref{appendix}, the principal components with
+the Appendix \ref{pca}, the principal components with
 lower retained variance correspond to almost pure noise and from the
 retained variance assesment (using the criterion of 90\% variance
 retention) we have obtained 429 components.
@@ -144,7 +144,7 @@ We have obtained the best performance applying baseline \texttt{SMOTE}
 with some fine-tuning on the \texttt{sampling\_strategy} \footnote{The
 value \texttt{all} means that all classes are resampled to match the
 size of the majority class.} and the \texttt{n\_neighbors} parameters.
-For more details see \ref{platform-limitations}.
+For more details see Appendix \ref{platform-limitations}.
 
 \begin{figure}[h]
 	\centering
@@ -180,7 +180,7 @@ checkpointing .
 \end{itemize}
 
 We couldn't implement \textbf{early stopping} both in \texttt{EKM} and
-\texttt{DenseNet121}\footnote{\texttt{DenseNet121}\cite{huang2016densely} is a CNN whose main feature relies on the connection between layers that are non contiguous (i.e.~the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.}, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to
+\texttt{DenseNet121}\footnote{\texttt{DenseNet121} is a CNN whose main feature relies on the connection between layers that are non contiguous (i.e.~the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.}, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to
 properly set the \texttt{min\_delta} and \texttt{patience} parameters in the \href{https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping}{TensorFlow implementation}. 
 
 The best choice of the optimizer for the \texttt{EKM} proved to be the
@@ -190,7 +190,7 @@ Then, in order to establish the quantitative impact of stocasticity in
 the initialization of the weights on \texttt{EKM}, another \texttt{EKM} (that we will call\texttt{EKM1}) with the best drop is trained and validated, and the best epochs of the previously checkpointed model and \texttt{EKM1} are compared. There was a small difference, therefore we decided to make three submissions: one with the baseline \texttt{EKM} re-trained on all the data and with the best drop, one with the checkpointed model and one with the \texttt{DenseNet121}.
 
 Besides fluctuations, we have noticed that the \texttt{DenseNet121}
-tends to reach higher submission scores. See \ref{training-histories}.
+tends to reach higher submission scores. See Appendix \ref{training-histories}.
 
 \subsection{Convolutional Autoencoder}\label{ae}
 
@@ -201,7 +201,7 @@ configurations that have been tried. The reason behind this relatively
 poor performance could be that on the one hand an autoencoder with no
 pooling on the encoder side makes little sense in terms of
 dimensionality reduction, while on the other hand even a single
-bidimensonal maxpooling caused the output image to be too little for the last \texttt{EKM} layer to classify. See \ref{platform-limitations} and \ref{exploration}. 
+bidimensonal maxpooling caused the output image to be too little for the last \texttt{EKM} layer to classify. See Appendix \ref{platform-limitations} and \ref{exploration}. 
 
 The only way way we have managed to run it and see at least some loss
 drop was to build a very shallow autoencoder (i.e.~just a couple of
@@ -238,16 +238,16 @@ effective, dataset-dependent model for image classification.
 Obviously the network should start with a \texttt{input} layer, followed by blocks of \texttt{Conv2D}-\texttt{Pooling}\footnote{\texttt{MaxPooling}
 in our case.} layers. The number of these blocks should be such that
 the last of them outputs a representation of \(n \times n\) pixels (
-\(\times c\) channels) where \(n\) is of the order of units. Then this
+\(\times\: c\) channels) where \(n\) is of the order of units. Then this
 should be followed by 1-2 dense layers, and a final dense classifier
 layer. If the classification is binary (sigmoid), then the last layer
 should be preceeded by a \texttt{BatchNormalization} layer.
 
-The first convolutional layer of the model uses 3 x 3 filters with depth of 3 \footnote{Equal to the number of channels of its input.}. Since the visualization of the convolutionl filters within the trained EKM might provide insight into how the model works, in FIG.  \ref{fig:filtersekm} we have represented the first seven filters of the first convolutional layer as rows of three subplots (one column per channel): the darker the squares the smaller the weights.
+The first convolutional layer of the model uses 3 x 3 filters with depth of 3 \footnote{Equal to the number of channels of its input.}. Since the visualization of the convolutionl filters within the trained \texttt{EKM} might provide insight into how the model works, in FIG.  \ref{fig:filtersekm} we have represented the first seven filters of the first convolutional layer as rows of three subplots (one column per channel): the darker the squares the smaller the weights.
 
 In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps\footnote{We should verify that the maps close to the input image
 detect high-resolution, fine-grained detail, whereas maps close to the
-model output extract coarser, more abstract concepts.}, in FIG.\ref{fig:fm9},\ref{fig:fm6} and \ref{fig:fm2} we visualize a 4 x 4 matrix of subplots showing a sample of feature maps extracted from the first, the third and the fifth convolutional layer. 
+model output extract coarser, more abstract concepts.}, in FIG.\ref{fig:fm9},\ref{fig:fm6} and \ref{fig:fm2} we visualize a $4 \times 4$ matrix of subplots showing a sample of feature maps extracted from the first, the third and the fifth convolutional layer. 
 
 \begin{figure}
 	\centering
@@ -265,7 +265,7 @@ column-wise ROC AUC}: 0.972 for \texttt{DenseNet121} and 0.937 for
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/ConfusionMatrixDenseNet121}
 	\includegraphics[width=0.7\linewidth]{Images/ConfusionMatrixEKM}
-	\caption{Confusion matrices of EKM (bottom) and DenseNet121 (top) on validation set.}
+	\caption{Confusion matrices of \texttt{EKM} (bottom) and DenseNet121 (top) on validation set.}
 	\label{fig:confusionmatrixdensenet121}
 \end{figure}
 
@@ -277,13 +277,13 @@ a possible third attempt to obtain it would have seen the best epoch
 number to use in the testing phase, when the model is re-trained on all
 training data, extrapolated from a \texttt{(best-epoch,\ training-set-size)} plot (given that stocasticity has not been relevant). 
 
-This has been practically impossible for us because of two main reasons: technical difficulty in combining Sci-kit learning curves with a Keras model necessarily trained with generators, and \ref{platform-limitations}. Those limitations prevented us from instantiating a single \texttt{Pipeline} object integrating all the elements (\texttt{SMOTE}, \texttt{ImageDataGenerator}, \texttt{Model}): this could have allowed us to perform a more extensive and reliable\footnote{If coupled with \emph{cross validation} instead of 80\%-20\% splitting.} grid search. Finally, as we have already mentioned, those computational limitations prevented us from implementing an effective convolutional autoencoder: if we used the full-sized images, the autoencoder may have been deeper and that could have plausibly yielded a better performance.
+This has been practically impossible for us because of two main reasons: technical difficulty in combining Sci-kit learning curves with a Keras model necessarily trained with generators, and Appendix \ref{platform-limitations}. Those limitations prevented us from instantiating a single \texttt{Pipeline} object integrating all the elements (\texttt{SMOTE}, \texttt{ImageDataGenerator}, \texttt{Model}): this could have allowed us to perform a more extensive and reliable\footnote{If coupled with \emph{cross validation} instead of 80\%-20\% splitting.} grid search. Finally, as we have already mentioned, those computational limitations prevented us from implementing an effective convolutional autoencoder: if we used the full-sized images, the autoencoder may have been deeper and that could have plausibly yielded a better performance.
 
 
 \appendix
 
 
-\section{Related Material}\label{additional-material}
+\section{Online Content}\label{additional-material}
 
 \begin{itemize}
 
@@ -309,7 +309,7 @@ our local machines, we have been constrained to rely on a publicly
 available cloud interactive environment like \emph{Kaggle}, which
 provided free out of the box kernels for our purposes. The only
 limitations are in terms of CPU RAM, which forced us to downsize the
-images to about 200 \(\times\) 200 pixels.
+images to about $200 \times 200$ pixels.
 
 \section{Visualization}\label{visualization}
 
@@ -331,7 +331,7 @@ images to about 200 \(\times\) 200 pixels.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/ExplainedVariance90}
-	\caption{Explained Variance.}
+	\caption{Explained variance with optimal number of components.}
 	\label{fig:explainedvariance90}
 \end{figure}
 
@@ -358,27 +358,27 @@ images to about 200 \(\times\) 200 pixels.
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{Images/FiltersEKM}
+	\includegraphics[width=0.65\linewidth]{Images/FiltersEKM}
 	\caption{The first seven filters of the first convolutional layer of the \texttt{EKM}.}
 	\label{fig:filtersekm}
 \end{figure}
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps0}
+	\includegraphics[width=0.65\linewidth]{Images/FeatureMaps0}
 	
 	\caption{Activation maps extracted from the first convolutional layer of \texttt{EKM}.}
 	\label{fig:fm9}
 \end{figure}
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps4}
+	\includegraphics[width=0.65\linewidth]{Images/FeatureMaps4}
 	
 	\caption{Activation maps extracted from the third convolutional layer of \texttt{EKM}.}
 	\label{fig:fm6}
 \end{figure}
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps8}
+	\includegraphics[width=0.65\linewidth]{Images/FeatureMaps8}
 	
 	\caption{Activation maps extracted from the fifth convolutional layer of \texttt{EKM}.}
 	\label{fig:fm2}
