@@ -197,15 +197,15 @@ include_graphics("Images/TrainingHistoryDenseNet121.png")
 ```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Three channels with some of the first 3x3 filters of the first hidden layer of the `EKM`.", out.width=550, out.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FiltersEKM.png")
 ```
-```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps extracted from the first convolutional layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps1, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps extracted from the first convolutional layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps9.png") 
 # PAY ATTENTION: Maps2 is Maps9
 ```
-```{r maps5, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps extracted from the third convolution layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps3, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps extracted from the third convolution layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps6.png")
 # PAY ATTENTION: Maps6 is Maps5
 ```
-```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps extracted from the fifth convolution layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps5, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 16.** Activation maps extracted from the fifth convolution layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps2.png")
 # PAY ATTENTION: Maps9 is Maps2
 ```
