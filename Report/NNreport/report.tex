@@ -2,7 +2,7 @@
 \documentclass[aps,twocolumn,secnumarabic,nobalancelastpage,amsmath,amssymb,
 nofootinbib]{revtex4}
 
-
+\usepackage{hyperref}
 \usepackage{graphics}      % standard graphics specifications
 \usepackage{graphicx}      % alternative graphics specifications
 \usepackage{longtable}     % helps with long table options
@@ -12,11 +12,7 @@ nofootinbib]{revtex4}
 \usepackage{subfigure}
 \usepackage{subfloat}
 \makeindex
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                 %%%%%
-% And now, begin the document...  %%%%%
-%                                 %%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
 \title{Dataset Analysis and CNN Models Optimization for Plant Disease
@@ -42,11 +38,7 @@ nofootinbib]{revtex4}
 	visualized. We have ultimately achieved a mean column-wise ROC AUC of
 	0.937 applying \texttt{EKM}, a relatively shallow CNN defined and
 	trained from scratch, and 0.972 applying the pre-trained Keras model
-	\texttt{DenseNet121}, a CNN whose main feature relies on the connection
-	between layers that are non contiguous (i.e.~the output of the first
-	layer is not only of the input of the second layer but also the third,
-	fourth, etc.), which allows for feature reutilization that ultimately
-	improves performance.\\
+	\texttt{DenseNet121}\\
 \end{abstract}
 \maketitle
 \tableofcontents
@@ -157,7 +149,8 @@ We have obtained the best performance applying baseline \texttt{SMOTE}
 with some fine-tuning on the \texttt{sampling\_strategy} \footnote{The
 value \texttt{all} means that all classes are resampled to match the
 size of the majority class.} and the \texttt{n\_neighbors} parameters.
-For more details see Platform Limitations.
+For more details see Platform
+	Limitations.
 
 \begin{figure}[h]
 	\centering
@@ -172,12 +165,11 @@ We have adopted the Keras \texttt{ImageDataGenerator} and, after a
 manual inspection of the images, we found that the best data
 augmentation technique was a random planar rotation combined with random
 horizontal flip. \footnote{For further information read the
-\href{https://keras.io/api/preprocessing/image/}{Keras image
-	pre-processing API}.}
+\href{https://keras.io/api/preprocessing/image/}{Keras image pre-processing API}.}
 
 \subsection{Model Architecture Exploration}\label{exploration}
 
-We have implemented an extensive exploration of all models and here is
+We have implemented an exploration of all models and here is
 reported the \textbf{grid search} that achieved the best performance:
 
 \begin{itemize}
@@ -194,7 +186,7 @@ checkpointing .
 \end{itemize}
 
 We couldn't implement \textbf{early stopping} both in \texttt{EKM} and
-\texttt{DenseNet121}, since the fluctuations in either validation loss,
+\texttt{DenseNet121}\footnote{\texttt{DenseNet121}\cite{huang2016densely} is a CNN whose main feature relies on the connection between layers that are non contiguous (i.e.~the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.}, since the fluctuations in either validation loss,
 categorical accuracy or mean column-wise ROC AUC where too high to
 properly set the \texttt{min\_delta} and \texttt{patience} parameters in
 the
@@ -258,7 +250,8 @@ unknown number of \texttt{Conv2D}-\texttt{Pooling} blocks in the encoder
 (that determines the number of
 \texttt{Conv2DTranspose}-\texttt{UpSampling} in the decoder) has to be
 jointly connected with the number of \texttt{Conv2D}-\texttt{Pooling}
-layers of the network. See Model Architecture.
+layers of the network. See Model
+	Architecture.
 
 \begin{figure}
 	\centering
@@ -281,6 +274,13 @@ should be followed by 1-2 dense layers, and a final dense classifier
 layer. If the classification is binary (sigmoid), then the last layer
 should be preceeded by a \texttt{BatchNormalization} layer.
 
+The first convolutional layer of the model uses 3 x 3 filters with depth of 3\footnote{Equal to the number of channels of its input.}. Since the visualization of the convolutionl filters within the trained EKM might provide insight into how the model works, in FIG.  \ref{fig:filtersekm} we have represented the first seven filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights.
+
+In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps\footnote{We should verify that the maps close to the input image
+	detect high-resolution, fine-grained detail, whereas maps close to the
+	model output extract coarser, more abstract concepts.}, in FIG.\ref{fig:fm9},\ref{fig:fm6} and \ref{fig:fm2} we visualize a 5 x 5 matrix of subplots
+showing a sample feature maps extracted from the second, the third and the fifth convolutional layer.
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/BaseNetShort}
@@ -293,11 +293,11 @@ The performance of the models has been evaluated on \textbf{mean
 column-wise ROC AUC}: 0.972 for \texttt{DenseNet121} and 0.937 for
 \texttt{EKM}.
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Images/ConfusionMatrixDenseNet121}
 	\includegraphics[width=0.7\linewidth]{Images/ConfusionMatrixEKM}
-	\caption{Confusion matrices of EKM (bottom) and DenseNet121 (top).}
+	\caption{Confusion matrices of EKM (bottom) and DenseNet121 (top) on validation set.}
 	\label{fig:confusionmatrixdensenet121}
 \end{figure}
 
@@ -360,67 +360,76 @@ images to about 200 \(\times\) 200 pixels.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth]{Images/PCA1}
+	\includegraphics[width=0.7\linewidth]{Images/PCA1}
 	\caption{The first ten principal directions of the PCA.}
 	\label{fig:pca1}
 \end{figure}
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth]{Images/PCA200}
+	\includegraphics[width=0.7\linewidth]{Images/PCA200}
 	\caption{Directions 200-210 of the PCA.}
 	\label{fig:pca200}
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.75\linewidth]{Images/ExplainedVariance90}
+	\includegraphics[width=0.7\linewidth]{Images/ExplainedVariance90}
 	\caption{Explained Variance.}
 	\label{fig:explainedvariance90}
 \end{figure}
 
+
 \subsection*{Training histories}
 
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.9\linewidth]{Images/TrainingHistoryEKM}
-	\caption{}
+	\includegraphics[width=0.8\linewidth]{Images/TrainingHistoryEKM}
+	\caption{Training history of the \texttt{EKM}}
 	\label{fig:traininghistoryekm}
 \end{figure}
 
 
 
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.9\linewidth]{Images/TrainingHistoryDenseNet121}
-	\caption{}
+	\includegraphics[width=0.8\linewidth]{Images/TrainingHistoryDenseNet121}
+	\caption{Training history of the \texttt{DenseNet121}}
 	\label{fig:traininghistorydensenet121}
 \end{figure}
+
+\newpage
 
 \subsection*{Filters and Activation Maps}
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.7\linewidth]{Images/FiltersEKM}
-	\caption{Three channels with some of the first 3x3 filters of the first hidden layer of the EKM.}
+	\includegraphics[width=0.6\linewidth]{Images/FiltersEKM}
+	\caption{Three channels with some of the first 3x3 filters of the first hidden layer of the \texttt{EKM}.}
 	\label{fig:filtersekm}
 \end{figure}
-
-The activation maps resulting from the application of filters to input images and to the output of maps in prior layers could provide insight into the internal representation that the model has of a specific input at a given point in the model.
-
-\onecolumngrid
-
-\begin{figure}%
+\begin{figure}[h!]
 	\centering
-	{{\includegraphics[width=5cm]{Images/FeatureMaps2} }}%
-	\qquad
-	{{\includegraphics[width=5cm]{Images/FeatureMaps6} }}%
-	\qquad
-	{{\includegraphics[width=5cm]{Images/FeatureMaps9} }}%
-	\caption{}%
-	\label{fig:example}%
+	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps9}
+	
+	\caption{Activation maps extracted from the second hidden layer of \texttt{EKM}}
+	\label{fig:fm9}
+\end{figure}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps6}
+	
+	\caption{Activation maps extracted from the sixth hidden layer of \texttt{EKM}}
+	\label{fig:fm6}
+\end{figure}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps2}
+	
+	\caption{Activation maps extracted from the ninth hidden layer of \texttt{EKM}}
+	\label{fig:fm2}
 \end{figure}
 
-\twocolumngrid
+\pagebreak
 
 \nocite{*}
 \bibliography{Bibliography}
