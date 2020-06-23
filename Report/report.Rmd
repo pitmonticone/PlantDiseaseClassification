@@ -161,7 +161,7 @@ This has been practically impossible for us because of two main reasons: technic
 ### Online Contents {#additional-material}
 
 * Explore the [GitHub repository](https://github.com/InPhyT/NeuralNetworksProject) of the project.
-* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/Notebooks/notebook.ipynb).
+* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb).
 * Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
 
 ### Platform Limitations {#platform-limitations}
