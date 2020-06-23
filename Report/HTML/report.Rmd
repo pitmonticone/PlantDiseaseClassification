@@ -129,7 +129,7 @@ Obviously the network should start with a `input` layer, followed by blocks of `
 include_graphics("Images/BaseNetShort.png")
 ```
 
-The first convolutional layer of the model uses 3 x 3 filters with depth of 3 ^[Equal to the number of channels of its input.]. Since the visualization of the convolutionl filters within the trained `EKM` might provide insight into how the model works, in [FIGURE 13](#filters-featuremaps) we have represented the first seven filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights. 
+The first convolutional layer of the model uses 3 x 3 filters with depth of 3 ^[Equal to the number of channels of its input.]. Since the visualization of the convolutional filters within the trained `EKM` might provide insight into how the model works, in [FIGURE 13](#filters-featuremaps) we have represented the first seven filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights. 
 
 In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps ^[We should verify that the maps close to the input image detect high-resolution, fine-grained detail, whereas  maps close to the model output extract coarser, more abstract concepts.], in [FIGURE 14](#filters-featuremaps), [15](#filters-featuremaps) and [16](#filters-featuremaps) we visualize a 5 x 5 matrix of subplots showing a sample feature maps extracted from the second, the third and the fifth convolutional layer. 
 
