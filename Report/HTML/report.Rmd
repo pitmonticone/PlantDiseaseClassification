@@ -200,9 +200,6 @@ include_graphics("Images/TrainingHistoryDenseNet121.png")
 ```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Three channels with some of the first 3x3 filters of the first hidden layer of the `EKM`.", out.width=550, out.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FiltersEKM.png")
 ```
-
-The activation maps resulting from the application of filters to input images and to the output of maps in prior layers could provide insight into the internal representation that the model has of a specific input at a given point in the model.
-
 ```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps extracted from the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps9.png") 
 # PAY ATTENTION: Maps2 is Maps9
