@@ -30,12 +30,11 @@ setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone
 
 ### **Abstract** 
 
-We have attended the Kaggle challange *Plant Pathology 2020 - FGVC7*. In this effort we have trained a convolutional neural network model with the given training dataset to classify testing images into different disease categories. During the training phase we have adopted class balancing, data augmentation, optimal dropout, epoch grid searching and, wherever possible, we have also manually fine-tuned the auxiliary elements of the pipeline. The SVD decomposition of the dataset, the convolutional filters and activation maps have been visualized. We have ultimately achieved a mean column-wise ROC AUC of 0.937 applying `EKM`, a relatively shallow CNN defined and trained from scratch, and 0.972 applying the pre-trained Keras model `DenseNet121`, a CNN whose main feature relies on the connection between layers that are non contiguous (i.e. the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.  
+We have attended the Kaggle challange *Plant Pathology 2020 - FGVC7*. In this effort we have trained a convolutional neural network model with the given training dataset to classify testing images into different disease categories. During the training phase we have adopted class balancing, data augmentation, optimal dropout, epoch grid searching and, wherever possible, we have also manually fine-tuned the auxiliary elements of the pipeline. The SVD decomposition of the dataset, the convolutional filters and activation maps have been visualized. We have ultimately achieved a mean column-wise ROC AUC of 0.937 applying `EKM`, a relatively shallow CNN defined and trained from scratch, and 0.972 applying the pre-trained Keras model `DenseNet121`.
 
 ## **Problem**
 
 Misdiagnosis of the many diseases impacting agricultural crops can lead to misuse of chemicals leading to the emergence of resistant pathogen strains, increased input costs, and more outbreaks with significant economic loss and environmental impacts. Current disease diagnosis based on human scouting is time-consuming and expensive, and although computer-vision based models have the promise to increase efficiency, the great variance in symptoms due to age of infected tissues, genetic variations, and light conditions within trees decreases the accuracy of detection.
-
 
 ## **Data**
 
@@ -43,7 +42,7 @@ Both the training and the testing datasets are composed of 1821 high-quality, re
 
 Altough a leaf labeled as `multiple_diseases` could be affected by a variety of diseases including rust, scab or both, we treated the classes as mutually exclusive because there is no taxonomy: in principle the model should distinguish between all four classes, as none of them is an abstraction of any of the others. The dataset is not balanced, but distributed as follows $(h = 516, m = 91, r = 622, s = 592)$. 
 
-```{r input-images, echo=FALSE, fig.align='center', fig.cap="**FIGURE 1.** Sample of training images.", out.width=800, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r input-images, echo=FALSE, fig.align='center', fig.cap="**FIGURE 1.** Sample of training images.", message=FALSE, warning=FALSE, out.height=500, out.width=800, paged.print=FALSE}
 include_graphics("Images/InputImages.png")
 ```
 
@@ -88,14 +87,14 @@ We have adopted the Keras `ImageDataGenerator` and, after a manual inspection of
 
 ### Model Architecture Exploration {#exploration}
 
-We have implemented an extensive exploration of all models and here is reported the **grid search** that achieved the best performance:
+We have implemented an exploration of all models and here is reported the **grid search** that achieved the best performance:
 
 1. some exploration and fine-tuning of the layers and parameters of the models (i.p. a dropout layer for the `EKM` only) ;
 1. variations of the optimizer (for the `EKM` only) ;
 1. optimal dropout and epoch number search ;
 1. checkpointing .
 
-We couldn't implement **early stopping** both in `EKM` and `DenseNet121`, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to properly set the `min_delta` and `patience` parameters in the [TensorFlow implementation](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping). 
+We couldn't implement **early stopping** both in `EKM` and `DenseNet121` ^[`DenseNet121` is a CNN whose main feature relies on the connection between layers that are non contiguous (i.e. the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.], since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to properly set the `min_delta` and `patience` parameters in the [TensorFlow implementation](https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping). 
 
 The best choice of the optimizer for the `EKM` proved to be the `RMSprop`, while the standard `adam` performed pretty well with the `DenseNet121`. The manual implementations of the dropout and early stopping searches acted simultaneoulsy, so they performed like a grid search. The dropout, epoch values and weight corresponding to the highest mean column-wise ROC AUC were saved and used during the testing phase. 
 
@@ -123,24 +122,22 @@ Some online resaerch and active trial and error with the network architecture ga
 Obviously the network should start with a `input` layer, followed by blocks of `Conv2D`-`Pooling`^[`MaxPooling` in our case.] layers. The number of these blocks should be such that the last of them outputs a representation of $n \times n$ pixels ( $\times c$ channels) where $n$ is of the order of units. Then this should be followed by 1-2 dense layers, and a final dense classifier layer. If the classification is binary (sigmoid), then the last layer should be preceeded by a `BatchNormalization` layer.
 
 ```{r basenet, echo=FALSE, fig.align='center', fig.cap='**FIGURE 5.** Schematic representation of the selected model architecture.', out.width=350, out.height=500, message=FALSE, warning=FALSE, paged.print=FALSE}
-
 include_graphics("Images/BaseNetShort.png")
 ```
 
-The first convolutional layer of the model uses 3 x 3 filters with depth of 3 ^[Equal to the number of channels of its input.]. Since the visualization of the convolutionl filters within the trained `EKM` might provide insight into how the model works, in [FIGURE 13](#filters-featuremaps) we have represented the first seven of 16/32/64 filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights. 
+The first convolutional layer of the model uses 3 x 3 filters with depth of 3 ^[Equal to the number of channels of its input.]. Since the visualization of the convolutionl filters within the trained `EKM` might provide insight into how the model works, in [FIGURE 13](#filters-featuremaps) we have represented the first seven filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights. 
 
-In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps ^[We should verify that the maps close to the input image detect high-resolution, fine-grained detail, whereas  maps close to the model output extract coarser, more abstract concepts.], in [FIGURE 14](#filters-featuremaps), [15](#filters-featuremaps) and [16](#filters-featuremaps) we visualize a 5 x 5 matrix of subplots showing a sample feature maps extracted from the second, the fifth and the ninth convolutional layer. 
+In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps ^[We should verify that the maps close to the input image detect high-resolution, fine-grained detail, whereas  maps close to the model output extract coarser, more abstract concepts.], in [FIGURE 14](#filters-featuremaps), [15](#filters-featuremaps) and [16](#filters-featuremaps) we visualize a 5 x 5 matrix of subplots showing a sample feature maps extracted from the second, the third and the fifth convolutional layer. 
 
 ## **Results**
 
 The performance of the models has been evaluated on **mean column-wise ROC AUC**: 0.972 for `DenseNet121` and 0.937 for `EKM`.
-```{r confusion-matrices, echo=FALSE, fig.align='center', fig.cap='**FIGURE 6.** Confusion matrices of `EKM` (left) and `DenseNet121` (right).', out.width=800, out.height=550, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+```{r confusion-matrices, echo=FALSE, fig.align='center', fig.cap='**FIGURE 6.** Confusion matrices of `EKM` (left) and `DenseNet121` (right) on validation set.', out.width=800, out.height=550, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(cowplot)
 library(ggplot2)
-
 p1 <- ggdraw() + draw_image("Images/ConfusionMatrixDenseNet121.png")
 p2 <- ggdraw() + draw_image("Images/ConfusionMatrixEKM.png")
-
 plot_grid(p1, p2)
 ```
 
@@ -200,15 +197,15 @@ include_graphics("Images/TrainingHistoryDenseNet121.png")
 ```{r filters-ekm, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Three channels with some of the first 3x3 filters of the first hidden layer of the `EKM`.", out.width=550, out.height=460, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FiltersEKM.png")
 ```
-```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps extracted from the second hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps2, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 14.** Activation maps extracted from the first convolutional layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps9.png") 
 # PAY ATTENTION: Maps2 is Maps9
 ```
-```{r maps5, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps extracted from the sixth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps5, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 15.** Activation maps extracted from the third convolution layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps6.png")
 # PAY ATTENTION: Maps6 is Maps5
 ```
-```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps extracted from the ninth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r maps9, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 13.** Activation maps extracted from the fifth hidden layer of `EKM`.", message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/FeatureMaps2.png")
 # PAY ATTENTION: Maps9 is Maps2
 ```
