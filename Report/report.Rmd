@@ -1,7 +1,7 @@
 ---
 title: "Dataset Analysis and CNN Models Optimization for Plant Disease Classification" 
 subtitle: "Recognition of Foliar Diseases in Apple Trees"
-author: "[**Claudio Moroni**]() | [**Davide Orsenigo**]() | [**Pietro Monticone**]()"
+author: "**Claudio Moroni**| **Davide Orsenigo** | **Pietro Monticone**"
 date: "`r format(Sys.time(), '%d %B %Y')`, *University of Turin*" 
 output: 
   prettydoc::html_pretty:
