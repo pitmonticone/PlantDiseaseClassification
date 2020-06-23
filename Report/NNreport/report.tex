@@ -1,4 +1,3 @@
-
 \documentclass[aps,twocolumn,secnumarabic,nobalancelastpage,amsmath,amssymb,
 nofootinbib]{revtex4}
 
@@ -7,7 +6,7 @@ nofootinbib]{revtex4}
 \usepackage{graphicx}      % alternative graphics specifications
 \usepackage{longtable}     % helps with long table options
 \usepackage{url}           % for on-line citations
-\usepackage{bm}           % special 'bold-math' package
+\usepackage{bm}            % special 'bold-math' package
 \usepackage{pdflscape}
 \usepackage{subfigure}
 \usepackage{subfloat}
@@ -38,11 +37,10 @@ nofootinbib]{revtex4}
 	visualized. We have ultimately achieved a mean column-wise ROC AUC of
 	0.937 applying \texttt{EKM}, a relatively shallow CNN defined and
 	trained from scratch, and 0.972 applying the pre-trained Keras model
-	\texttt{DenseNet121}\\
+	\texttt{DenseNet121}.\\
 \end{abstract}
 \maketitle
 \tableofcontents
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem}
@@ -54,7 +52,7 @@ Both the training and the testing datasets are composed of 1821
 high-quality, real-life symptom images of multiple apple foliar diseases
 to be classified into four categories: \texttt{healthy} (\(h\)),
 \texttt{multiple\_diseases} (\(m\)), \texttt{rust} (\(r\)),
-\texttt{scab} (\(s\)).
+\texttt{scab} (\(s\)). \n
 
 Altough a leaf labeled as \texttt{multiple\_diseases} could be affected
 by a variety of diseases including rust, scab or both, we treated the
@@ -76,10 +74,10 @@ reduce the dimensionality of the dataset, we believe it might be
 interesting to visualize the first ten principal directions and
 qualitatively compare them with a sequence of principal directions with
 lower retained variance. As we can appreciate in the figures reported in
-the Appendix, the principal components with
+the \ref{appendix}, the principal components with
 lower retained variance correspond to almost pure noise and from the
 retained variance assesment (using the criterion of 90\% variance
-retention) we have obtained 429 components.
+retention) we have obtained 429 components.\n
 
 Here instead we visualize the first two principal components of a
 \textbf{truncated SVD} to qualitatively investigate the linear
@@ -98,15 +96,12 @@ separability of the dataset \footnote{\textbf{Assumption}: if the
 
 
 As one could have resonably expected given such a high dimensionality,
-the dataset is not linearly separable.
+the dataset is not linearly separable. \n
 
 Later in the report we will describe an attempt using a
-convolutional autoencoder, while in the next
-section we can verify the amplification of the classes performed by
-\texttt{SMOTE} and recognize the clustering of the generated points.
+\ref{ae}, while in the next section we can verify the amplification of the classes performed by \texttt{SMOTE} and recognize the clustering of the generated points.
 
 \section{Methods}\label{methods}
-
 
 \subsection{Class Balancing with
 		\texttt{SMOTE}\label{smote}}
@@ -149,8 +144,7 @@ We have obtained the best performance applying baseline \texttt{SMOTE}
 with some fine-tuning on the \texttt{sampling\_strategy} \footnote{The
 value \texttt{all} means that all classes are resampled to match the
 size of the majority class.} and the \texttt{n\_neighbors} parameters.
-For more details see Platform
-	Limitations.
+For more details see \ref{platform-limitations}.
 
 \begin{figure}[h]
 	\centering
@@ -186,44 +180,34 @@ checkpointing .
 \end{itemize}
 
 We couldn't implement \textbf{early stopping} both in \texttt{EKM} and
-\texttt{DenseNet121}\footnote{\texttt{DenseNet121}\cite{huang2016densely} is a CNN whose main feature relies on the connection between layers that are non contiguous (i.e.~the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.}, since the fluctuations in either validation loss,
-categorical accuracy or mean column-wise ROC AUC where too high to
+\texttt{DenseNet121}\footnote{\texttt{DenseNet121}\cite{huang2016densely} is a CNN whose main feature relies on the connection between layers that are non contiguous (i.e.~the output of the first layer is not only of the input of the second layer but also the third, fourth, etc.), which allows for feature reutilization that ultimately improves performance.}, since the fluctuations in either validation loss, categorical accuracy or mean column-wise ROC AUC where too high to
 properly set the \texttt{min\_delta} and \texttt{patience} parameters in
-the
-\href{https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping}{TensorFlow
-implementation}.
+the \href{https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/EarlyStopping}{TensorFlow implementation}. \n
 
 The best choice of the optimizer for the \texttt{EKM} proved to be the
 \texttt{RMSprop}, while the standard \texttt{adam} performed pretty well
 with the \texttt{DenseNet121}. The manual implementations of the dropout
 and early stopping searches acted simultaneoulsy, so they performed like
-a grid search. The dropout, epoch values and weight corresponding to the
-highest mean column-wise ROC AUC were saved and used during the testing
-phase.
+a grid search. The dropout, epoch values and checkpoint corresponding to the highest mean column-wise ROC AUC were saved and used during the testing phase. \n
 
 Then, in order to establish the quantitative impact of stocasticity in
-the initialization of the weights on \texttt{EKM}, an \texttt{EKM1} with
-the best drop is trained and validated, and the best epochs of
-\texttt{EKM} and \texttt{EKM1} are compared. There was a small
-difference, therefore we decided to make three submissions: one with the
-baseline \texttt{EKM} re-trained on all the data and with the best drop,
-one with \texttt{EKM1} and one with the \texttt{DenseNet121}.
+the initialization of the weights on \texttt{EKM}, another \texttt{EKM} (that we will call\texttt{EKM_1}) with the best drop is trained and validated, and the best epochs of the previously checkpointed model and \texttt{EKM1} are compared. There was a small difference, therefore we decided to make three submissions: one with the baseline \texttt{EKM} re-trained on all the data and with the best drop,
+one with the checkpointed model and one with the \texttt{DenseNet121}. \n
 
 Besides fluctuations, we have noticed that the \texttt{DenseNet121}
-tends to reach higher submission scores. See
-Training Histories.
+tends to reach higher submission scores. See \ref{training-histories}.
 
 \subsection{Convolutional Autoencoder}\label{ae}
 
 The best we could achieve by inserting a covolutional autoencoder
 between the smoted data, augmented data and the model training is a
-\(0.7\) mean column-wise ROC AUC, despite the large number of the
+0.7 mean column-wise ROC AUC, despite the large number of the
 configurations that have been tried. The reason behind this relatively
 poor performance could be that on the one hand an autoencoder with no
 pooling on the encoder side makes little sense in terms of
 dimensionality reduction, while on the other hand even a single
 bidimensonal maxpooling caused the output image to be too little for the
-last \texttt{EKM} layer to classify. See Platform limitations and Model Architecture Exploration.
+last \texttt{EKM} layer to classify. See \ref{platform-limitations} and \ref{exploration}. \n
 
 The only way way we have managed to run it and see at least some loss
 drop was to build a very shallow autoencoder (i.e.~just a couple of
@@ -233,7 +217,7 @@ and by some active trial and error, we have had a chance to collect some
 architectural criteria to build a convolutional autoencoder that at
 least exhibits learning. The following is to be intended as an empirical
 recipe, with no or little theoretical foundation supporting the choice
-of its ingredients.
+of its ingredients. \n
 
 The autoencoder is composed of an encoder and a decoder. Obviously the
 encoder should start with an \texttt{input} layer, followed by some
@@ -250,8 +234,7 @@ unknown number of \texttt{Conv2D}-\texttt{Pooling} blocks in the encoder
 (that determines the number of
 \texttt{Conv2DTranspose}-\texttt{UpSampling} in the decoder) has to be
 jointly connected with the number of \texttt{Conv2D}-\texttt{Pooling}
-layers of the network. See Model
-	Architecture.
+layers of the network. See \ref{model-architecture}.
 
 \begin{figure}
 	\centering
@@ -263,7 +246,7 @@ layers of the network. See Model
 
 Some online resaerch and active trial and error with the network
 architecture gave us some clues about how to build from scratch an
-effective, dataset-dependent model for image classification.
+effective, dataset-dependent model for image classification. \n
 
 Obviously the network should start with a \texttt{input} layer, followed
 by blocks of \texttt{Conv2D}-\texttt{Pooling}\footnote{\texttt{MaxPooling}
@@ -272,9 +255,9 @@ the last of them outputs a representation of \(n \times n\) pixels (
 \(\times c\) channels) where \(n\) is of the order of units. Then this
 should be followed by 1-2 dense layers, and a final dense classifier
 layer. If the classification is binary (sigmoid), then the last layer
-should be preceeded by a \texttt{BatchNormalization} layer.
+should be preceeded by a \texttt{BatchNormalization} layer. \n
 
-The first convolutional layer of the model uses 3 x 3 filters with depth of 3\footnote{Equal to the number of channels of its input.}. Since the visualization of the convolutionl filters within the trained EKM might provide insight into how the model works, in FIG.  \ref{fig:filtersekm} we have represented the first seven filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights.
+The first convolutional layer of the model uses 3 x 3 filters with depth of 3\footnote{Equal to the number of channels of its input.}. Since the visualization of the convolutionl filters within the trained EKM might provide insight into how the model works, in FIG.  \ref{fig:filtersekm} we have represented the first seven filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights. \n
 
 In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps\footnote{We should verify that the maps close to the input image
 	detect high-resolution, fine-grained detail, whereas maps close to the
@@ -309,11 +292,11 @@ a possible third attempt to obtain it would have seen the best epoch
 number to use in the testing phase, when the model is re-trained on all
 training data, extrapolated from a
 \texttt{(best-epoch,\ training-set-size)} plot (given that stocasticity
-has not been relevant).
+has not been relevant). \n
 
 This has been practically impossible for us because of two main reasons:
 technical difficulty in combining Sci-kit learning curves with a Keras
-model necessarily trained with generators, and platform limitations. Those limitations prevented us from instantiating a single \texttt{Pipeline} object integrating all the elements (\texttt{SMOTE},
+model necessarily trained with generators, and \ref{platform-limitations}. Those limitations prevented us from instantiating a single \texttt{Pipeline} object integrating all the elements (\texttt{SMOTE},
 \texttt{ImageDataGenerator}, \texttt{Model}): this could have allowed us
 to perform a more extensive and reliable\footnote{If coupled with
 \emph{cross validation} instead of 80\%-20\% splitting.} grid search.
@@ -336,7 +319,7 @@ Explore the
 	repository} of the project.
 \vspace{-0.2cm}\item
 Read the code in the
-\href{https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/notebook.ipynb}{Jupyter
+\href{https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/Notebooks/notebook.ipynb}{Jupyter
 	notebook}.
 \vspace{-0.2cm}\item
 Run the code in the
@@ -379,21 +362,19 @@ images to about 200 \(\times\) 200 pixels.
 \end{figure}
 
 
-\subsection*{Training histories}
+\subsection*{Training Histories}\label{training-histories}
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\linewidth]{Images/TrainingHistoryEKM}
-	\caption{Training history of the \texttt{EKM}}
+	\caption{Training history of the \texttt{EKM}.}
 	\label{fig:traininghistoryekm}
 \end{figure}
-
-
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\linewidth]{Images/TrainingHistoryDenseNet121}
-	\caption{Training history of the \texttt{DenseNet121}}
+	\caption{Training history of the \texttt{DenseNet121}.}
 	\label{fig:traininghistorydensenet121}
 \end{figure}
 
@@ -411,21 +392,21 @@ images to about 200 \(\times\) 200 pixels.
 	\centering
 	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps9}
 	
-	\caption{Activation maps extracted from the second hidden layer of \texttt{EKM}}
+	\caption{Activation maps extracted from the first convolutional layer of \texttt{EKM}.}
 	\label{fig:fm9}
 \end{figure}
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps6}
 	
-	\caption{Activation maps extracted from the sixth hidden layer of \texttt{EKM}}
+	\caption{Activation maps extracted from the third convolutional layer of \texttt{EKM}.}
 	\label{fig:fm6}
 \end{figure}
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps2}
 	
-	\caption{Activation maps extracted from the ninth hidden layer of \texttt{EKM}}
+	\caption{Activation maps extracted from the fifth hidden layer of \texttt{EKM}.}
 	\label{fig:fm2}
 \end{figure}
 
