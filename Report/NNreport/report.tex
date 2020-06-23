@@ -243,11 +243,11 @@ should be followed by 1-2 dense layers, and a final dense classifier
 layer. If the classification is binary (sigmoid), then the last layer
 should be preceeded by a \texttt{BatchNormalization} layer.
 
-The first convolutional layer of the model uses 3 x 3 filters with depth of 3\footnote{Equal to the number of channels of its input.}. Since the visualization of the convolutionl filters within the trained EKM might provide insight into how the model works, in FIG.  \ref{fig:filtersekm} we have represented the first seven filters of the first convolutional layer as rows of three subplots (one per channel): the darker the squares the smaller the weights.
+The first convolutional layer of the model uses 3 x 3 filters with depth of 3 \footnote{Equal to the number of channels of its input.}. Since the visualization of the convolutionl filters within the trained EKM might provide insight into how the model works, in FIG.  \ref{fig:filtersekm} we have represented the first seven filters of the first convolutional layer as rows of three subplots (one column per channel): the darker the squares the smaller the weights.
 
 In order to capture the application of filters to a selected testing image or deeper activation outputs and therefore trying to understand what features of the input are detected or preserved in the activation maps\footnote{We should verify that the maps close to the input image
 detect high-resolution, fine-grained detail, whereas maps close to the
-model output extract coarser, more abstract concepts.}, in FIG.\ref{fig:fm9},\ref{fig:fm6} and \ref{fig:fm2} we visualize a 5 x 5 matrix of subplots showing a sample feature maps extracted from the second, the third and the fifth convolutional layer.
+model output extract coarser, more abstract concepts.}, in FIG.\ref{fig:fm9},\ref{fig:fm6} and \ref{fig:fm2} we visualize a 4 x 4 matrix of subplots showing a sample of feature maps extracted from the first, the third and the fifth convolutional layer. 
 
 \begin{figure}
 	\centering
@@ -359,26 +359,26 @@ images to about 200 \(\times\) 200 pixels.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.6\linewidth]{Images/FiltersEKM}
-	\caption{Three channels with some of the first 3x3 filters of the first hidden layer of the \texttt{EKM}.}
+	\caption{The first seven filters of the first convolutional layer of the \texttt{EKM}.}
 	\label{fig:filtersekm}
 \end{figure}
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps9}
+	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps0}
 	
 	\caption{Activation maps extracted from the first convolutional layer of \texttt{EKM}.}
 	\label{fig:fm9}
 \end{figure}
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps6}
+	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps4}
 	
 	\caption{Activation maps extracted from the third convolutional layer of \texttt{EKM}.}
 	\label{fig:fm6}
 \end{figure}
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps2}
+	\includegraphics[width=0.6\linewidth]{Images/FeatureMaps8}
 	
 	\caption{Activation maps extracted from the fifth convolutional layer of \texttt{EKM}.}
 	\label{fig:fm2}
