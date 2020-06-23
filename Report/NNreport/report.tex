@@ -191,7 +191,7 @@ and early stopping searches acted simultaneoulsy, so they performed like
 a grid search. The dropout, epoch values and checkpoint corresponding to the highest mean column-wise ROC AUC were saved and used during the testing phase. \newline
 
 Then, in order to establish the quantitative impact of stocasticity in
-the initialization of the weights on \texttt{EKM}, another \texttt{EKM} (that we will call\texttt{EKM_1}) with the best drop is trained and validated, and the best epochs of the previously checkpointed model and \texttt{EKM1} are compared. There was a small difference, therefore we decided to make three submissions: one with the baseline \texttt{EKM} re-trained on all the data and with the best drop,
+the initialization of the weights on \texttt{EKM}, another \texttt{EKM} (that we will call \texttt{EKM1}) with the best drop is trained and validated, and the best epochs of the previously checkpointed model and \texttt{EKM1} are compared. There was a small difference, therefore we decided to make three submissions: one with the baseline \texttt{EKM} re-trained on all the data and with the best drop,
 one with the checkpointed model and one with the \texttt{DenseNet121}. \newline
 
 Besides fluctuations, we have noticed that the \texttt{DenseNet121}
