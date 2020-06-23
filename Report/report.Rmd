@@ -23,8 +23,8 @@ knitr::opts_chunk$set(
 )
 library(knitr)
 
-setwd("~/github/NeuralNetworksProject/Report/HTML") # Pietro Monticone 
-#setwd("~/GitHub/NeuralNetworksProject/Report/HTML") # Claudio Moroni  
+setwd("~/github/NeuralNetworksProject/Report") # Pietro Monticone 
+#setwd("~/GitHub/NeuralNetworksProject/Report") # Claudio Moroni  
 #setwd("Q:\\tooBigToDrive\\plantsvillage\\Report\\report") # Claudio Moroni  
 ```
 
@@ -178,7 +178,7 @@ include_graphics("Images/PCA1.png")
 ```{r pca200, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 8.** Directions 200-210 of the PCA.",  out.width=800, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/PCA200.png")
 ```
-```{r variance, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 9.** Explained Variance.",  out.width=550, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r variance, echo=FALSE, fig.align='center', fig.cap = "**FIGURE 9.** Explained variance with optimal number of components.",  out.width=550, out.height=400, message=FALSE, warning=FALSE, paged.print=FALSE}
 include_graphics("Images/ExplainedVariance90.png")
 ```
 
