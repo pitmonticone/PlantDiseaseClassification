@@ -6,11 +6,11 @@ Moroni Claudio | [Mail](claudio.moroni@edu.unito.it) | [Github](https://github.c
 
 Orsenigo Davide | [Mail](davide.orsenigo@edu.unito.it) | [Github](https://github.com/dadorse) 
 
-## How to Explore this Work
+## Documents
 
-* Read the report in [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) or [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) format.
-* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb).
-* Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
+Report | [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) | [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html)
+
+Code | [Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject)
 
 ## Extended Abstract
 
