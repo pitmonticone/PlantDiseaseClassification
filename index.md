@@ -1,13 +1,3 @@
-<!-- Title -->
-<h1 align="center">
-  Neural Networks Project
-</h1>
-
-<!-- Subtitle -->
-<h3 align="center">
-  Dataset Analysis and CNN Models Optimization for Plant Disease Classification
-</h3>
-
 ## Authors 
 
 * Monticone Pietro | [Mail](pietro.monticone@edu.unito.it) | [Github](https://github.com/pitmonticone)
