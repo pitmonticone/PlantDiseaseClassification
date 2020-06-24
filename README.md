@@ -6,6 +6,7 @@
   </a>
     <img alt="Languages" src="https://img.shields.io/github/languages/count/InPhyT/NeuralNetworksProject">
   </a>
+  <a href="https://github.com/InPhyT/NeuralNetworksProject/graphs/contributors">
     <img alt="Contributors" src="https://img.shields.io/github/contributors/InPhyT/NeuralNetworksProject">
   </a>
     <img alt="MIT Licence" src="https://img.shields.io/badge/License-MIT-yellow.svg">
