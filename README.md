@@ -40,13 +40,6 @@
   
 </p>
 
-
-## Authors 
-
-* Monticone Pietro | [Mail](pietro.monticone@edu.unito.it) | [Github](https://github.com/pitmonticone)
-* Moroni Claudio | [Mail](claudio.moroni@edu.unito.it) | [Github](https://github.com/claudio20497)
-* Orsenigo Davide | [Mail](davide.orsenigo@edu.unito.it) | [Github](https://github.com/dadorse) 
-
 ## How to Explore this Work
 
 * Read the report in [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) or [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) format.
