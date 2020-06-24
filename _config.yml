@@ -1,3 +1,8 @@
-theme: jekyll-theme-cayman
+# Name of website
 title: Neural Networks Project
-subtitle: Dataset Analysis and CNN Models Optimization for Plant Disease Classification
+
+# Short description of your site
+description: Dataset Analysis and CNN Models Optimization for Plant Disease Classification
+
+# Theme
+theme: jekyll-theme-cayman
