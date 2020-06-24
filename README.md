@@ -41,7 +41,7 @@
 </p>
 
 
-## Team 
+## Authors 
 
 * Monticone Pietro | [Mail](pietro.monticone@edu.unito.it) | [Github](https://github.com/pitmonticone)
 * Moroni Claudio | [Mail](claudio.moroni@edu.unito.it) | [Github](https://github.com/claudio20497)
