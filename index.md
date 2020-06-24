@@ -1,13 +1,13 @@
 ## Authors 
 
-**Monticone Pietro** | [Mail](pietro.monticone@edu.unito.it) | [Github](https://github.com/pitmonticone)
-**Moroni Claudio** | [Mail](claudio.moroni@edu.unito.it) | [Github](https://github.com/claudio20497)
-**Orsenigo Davide** | [Mail](davide.orsenigo@edu.unito.it) | [Github](https://github.com/dadorse) 
+Monticone Pietro | [Mail](**pietro.monticone@edu.unito.it**) | [Github](**https://github.com/pitmonticone**)
+Moroni Claudio | [Mail](**claudio.moroni@edu.unito.it**) | [Github](**https://github.com/claudio20497**)
+Orsenigo Davide | [Mail](**davide.orsenigo@edu.unito.it**) | [Github](**https://github.com/dadorse**) 
 
 ## Documents
 
-**Report** | [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) | [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html)
-**Code** | [Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject)
+Report | [**PDF**](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) | [**HTML**](https://inphyt.github.io/NeuralNetworksProject/Report/report.html)
+Notebook | [**Jupyter**](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) | [**Kaggle**](https://www.kaggle.com/inphyt2020/neuralnetworksproject)
 
 ## Extended Abstract
 
