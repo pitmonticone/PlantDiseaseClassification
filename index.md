@@ -8,8 +8,9 @@ Orsenigo Davide | davide.orsenigo@edu.unito.it | [dadorse](https://github.com/da
 
 ## Documents
 
-Report | [**PDF**](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) | [**HTML**](https://inphyt.github.io/NeuralNetworksProject/Report/report.html)
-Notebook | [**Jupyter**](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) | [**Kaggle**](https://www.kaggle.com/inphyt2020/neuralnetworksproject)
+**Report** | **Code**
+[PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) | [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html)
+[Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject)
 
 ## Extended Abstract
 
