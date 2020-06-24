@@ -41,8 +41,9 @@ Both the training and the testing [datasets](https://www.kaggle.com/c/plant-path
 
 ### Results 
 
-* **ROC = 0.972** applying the pre-trained Keras model [`DenseNet121`](https://keras.io/api/applications/densenet/#densenet121-function).
-* **ROC = 0.937** applying a CNN which has been defined and trained from scratch. 
+**Model** | **ROC AUC**
+Keras `DenseNet121` | 0.972
+InPhyT `EKM` | 0.937 
 
 ### References 
 
