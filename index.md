@@ -1,8 +1,10 @@
 ## Documents
 
-**Report** | **Code**
-[PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) | [Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) 
-[HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject)
+| Report  | Code |
+| ------------- | ------------- |
+| [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf)  | [Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) |
+| [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject) |
+
 
 ## Extended Abstract
 
