@@ -38,9 +38,10 @@ Both the training and the testing [datasets](https://www.kaggle.com/c/plant-path
 
 ### Results 
 
-**Model** | **ROC AUC**
-Keras `DenseNet121` | 0.972
-InPhyT `EKM` | 0.937 
+| Model  | ROC AUC |
+| ------------- | ------------- |
+| Keras `DenseNet121` | 0.972 |
+| InPhyT `EKM` | 0.937 |
 
 ### References 
 
