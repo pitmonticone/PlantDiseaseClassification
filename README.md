@@ -4,12 +4,18 @@
 <p align="center">
     <img alt="Size" src="https://img.shields.io/github/repo-size/InPhyT/NeuralNetworksProject">
   </a>
-    <img alt="Languages" src="https://img.shields.io/github/languages/count/InPhyT/NeuralNetworksProject">
+  <img alt="Forks" src="https://img.shields.io/github/forks/InPhyT/NeuralNetworksProject">
+  </a>
+  <img alt="Stars" src="https://img.shields.io/github/stars/InPhyT/NeuralNetworksProject">
+  </a>
+  <img alt="Languages" src="https://img.shields.io/github/languages/count/InPhyT/NeuralNetworksProject">
   </a>
   <a href="https://github.com/InPhyT/NeuralNetworksProject/graphs/contributors">
     <img alt="Contributors" src="https://img.shields.io/github/contributors/InPhyT/NeuralNetworksProject">
   </a>
-    <img alt="MIT Licence" src="https://img.shields.io/badge/License-MIT-yellow.svg">
+  <img alt="Licence" src="https://img.shields.io/github/license/InPhyT/NeuralNetworksProject">
+  </a>
+  <img alt="Twitter" src="https://img.shields.io/twitter/url?url=https%3A%2F%2Fgithub.com%2FInPhyT%2FNeuralNetworksProject"
   </a>
   
 </p>
