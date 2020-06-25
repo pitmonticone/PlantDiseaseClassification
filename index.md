@@ -1,7 +1,7 @@
 ## Documents
 
 | Report  | Code |
-| ------------- | ------------- |
+|     :---:      |      :---:      | 
 | [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf)  | [Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) |
 | [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject) |
 
@@ -39,7 +39,7 @@ Both the training and the testing [datasets](https://www.kaggle.com/c/plant-path
 ### Results 
 
 | Model  | ROC AUC |
-| ------------- | ------------- |
+|     :---:      |      :---:      | 
 | Keras `DenseNet121` | 0.972 |
 | InPhyT `EKM` | 0.937 |
 
