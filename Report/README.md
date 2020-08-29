@@ -5,7 +5,7 @@
   <a href="https://www.kaggle.com/inphyt2020/neuralnetworksproject">
     <img alt="Kaggle" src="https://kaggle.com/static/images/open-in-kaggle.svg">
   </a>
-  <a href="https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/">
+  <a href="https://nbviewer.jupyter.org/github/pitmonticone/PlantDiseaseClassification/">
     <img alt="nbviewer" src="https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg">
   </a>
   <a href="https://colab.research.google.com/github/InPhyT/NeuralNetworksProject/blob/master">
@@ -14,7 +14,7 @@
 
 <!-- Title -->
 <h1 align="center">
-  Dataset Analysis and CNN Models Optimization for Plant Disease Classification 
+  Dataset Analysis & CNN Models Optimization for Plant Disease Classification 
 </h1>
 
 <!-- Subtitle -->
@@ -59,8 +59,8 @@ Both the training and the testing [datasets](https://www.kaggle.com/c/plant-path
 
 ### Online Contents
 
-* Read the report in [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) or [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) format.
-* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb).
+* Read the report in [PDF](https://pitmonticone.github.io/PlantDiseaseClassification/Report/report.pdf) or [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) format.
+* Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/pitmonticone/PlantDiseaseClassification/blob/master/Notebooks/notebook.ipynb).
 * Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
 
 ### References 
