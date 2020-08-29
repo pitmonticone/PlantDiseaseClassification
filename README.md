@@ -37,7 +37,7 @@
   <a href="https://www.kaggle.com/inphyt2020/neuralnetworksproject">
     <img alt="Kaggle" src="https://kaggle.com/static/images/open-in-kaggle.svg">
   </a>
-  <a href="https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/">
+  <a href="https://nbviewer.jupyter.org/github/pitmonticone/PlantDiseaseClassification/">
     <img alt="nbviewer" src="https://github.com/jupyter/design/blob/master/logos/Badges/nbviewer_badge.svg">
   </a>
   <a href="https://colab.research.google.com/github/InPhyT/NeuralNetworksProject/blob/master">
