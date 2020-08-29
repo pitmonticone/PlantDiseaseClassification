@@ -2,8 +2,8 @@
 
 | Report  | Code |
 | ---- | ---- |
-| [PDF](https://inphyt.github.io/PlantDiseaseClassification/Report/report.pdf)  | [Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/PlantDiseaseClassification/blob/master/Notebooks/notebook.ipynb) |
-| [HTML](https://inphyt.github.io/PlantDiseaseClassification/Report/report.html) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject) |
+| [PDF](https://pitmonticone.github.io/PlantDiseaseClassification/Report/report.pdf)  | [Jupyter Notebook](https://nbviewer.jupyter.org/github/pitmonticone/PlantDiseaseClassification/blob/master/Notebooks/notebook.ipynb) |
+| [HTML](https://pitmonticone.github.io/PlantDiseaseClassification/Report/report.html) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject) |
 
 
 ## Extended Abstract
