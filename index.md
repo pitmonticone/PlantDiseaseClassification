@@ -1,37 +1,49 @@
-## Welcome to GitHub Pages
+## Documents
 
-You can use the [editor on GitHub](https://github.com/pitmonticone/PlantDiseaseClassification/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+| Report  | Code |
+| ---- | ---- |
+| [PDF](https://pitmonticone.github.io/NeuralNetworksProject/Report/report.pdf)  | [Jupyter Notebook](https://nbviewer.jupyter.org/github/InPhyT/NeuralNetworksProject/blob/master/Notebooks/notebook.ipynb) |
+| [HTML](https://pitmonticone.github.io/NeuralNetworksProject/Report/report.html) | [Kaggle Notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject) |
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+## Extended Abstract
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Problem 
 
-```markdown
-Syntax highlighted code block
+Misdiagnosis of the many diseases impacting agricultural crops can lead to misuse of chemicals leading to the emergence of resistant pathogen strains, increased input costs, and more outbreaks with significant economic loss and environmental impacts. Current disease diagnosis based on human scouting is time-consuming and expensive, and although computer-vision based models have the promise to increase efficiency, the great variance in symptoms due to age of infected tissues, genetic variations, and light conditions within trees decreases the accuracy of detection.
 
-# Header 1
-## Header 2
-### Header 3
+### Objectives
 
-- Bulleted
-- List
+The [Plant Pathology Challenge](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview) we have attended consists in training a model using images of the [training dataset](https://arxiv.org/abs/2004.11958) to
+* accurately classify a given image from testing dataset into different diseased category or a healthy leaf; 
+* accurately distinguish between many diseases, sometimes more than one on a single leaf;
+* deal with rare classes and novel symptoms;
+* address depth perception—angle, light, shade, physiological age of the leaf; 
+* Incorporate expert knowledge in identification, annotation, quantification, and guiding computer vision to search for relevant features during learning.
 
-1. Numbered
-2. List
+Submissions are evaluated on [mean column-wise ROC AUC](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/overview/evaluation).
 
-**Bold** and _Italic_ and `Code` text
+### Data 
 
-[Link](url) and ![Image](src)
-```
+Both the training and the testing [datasets](https://www.kaggle.com/c/plant-pathology-2020-fgvc7/data) are composed of 1821 high-quality, real-life symptom images of multiple apple foliar diseases to be classified into four categories: `healthy`, `multiple_diseases`, `rust`, `scab`. 
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### Methods
 
-### Jekyll Themes
+1. Class balancing with [`SMOTE`](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.over_sampling.SMOTE.html)
+1. Data augmentation with [Keras `ImageDataGenerator`](https://keras.io/api/preprocessing/image/)
+1. Learning rate schedule
+1. Optimal dropout
+1. Epoch grid search
+1. Visualization of convolutional filters and activation maps of the layers.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/pitmonticone/PlantDiseaseClassification/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### Results 
 
-### Support or Contact
+| Model  | ROC AUC |
+| ---- | ---- |
+| Keras `DenseNet121` | 0.972 |
+| InPhyT `EKM` | 0.937 |
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### References 
+
+1. [Plant Pathology 2020 - FGVC7: Identify the category of foliar diseases in apple trees](https://www.kaggle.com/c/plant-pathology-2020-fgvc7), *Kaggle* (2020). 
+1. Ranjita Thapa et al. [The Plant Pathology 2020 challenge dataset to classify foliar disease of apples](https://arxiv.org/abs/2004.11958), *arXiv pre-print* (2020). 
