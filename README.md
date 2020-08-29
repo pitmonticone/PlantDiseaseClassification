@@ -22,12 +22,12 @@
 
 <!-- Title -->
 <h1 align="center">
-  Neural Networks Project
+  Plant Disease Classification
 </h1>
 
 <!-- Subtitle -->
 <h3 align="center">
-  Dataset Analysis and CNN Models Optimization for Plant Disease Classification
+  Dataset Analysis and CNN Models Optimization 
 </h3>
 
 <!-- Badges -->
