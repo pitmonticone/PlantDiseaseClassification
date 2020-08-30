@@ -1,8 +1,8 @@
 # Name of website
-title: "Plant Disease Classification" 
+title: Plant Disease Classification
 
 # Short description of your site
-description: "Dataset Analysis and CNN Models Optimization"
+description: Dataset Analysis and CNN Models Optimization
 
 # Theme
 theme: jekyll-theme-cayman
