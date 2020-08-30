@@ -48,7 +48,7 @@
 
 ## How to Explore this Work
 
-* Read the report in [PDF](https://pitmonticone.github.io/PlantDiseaseClassification/Report/report.pdf) or [HTML](https://pitmonticone.github.io/PlantDiseaseClassification/Report/report.html) format.
+* Read the report in [PDF](https://inphyt.github.io/NeuralNetworksProject/Report/report.pdf) or [HTML](https://inphyt.github.io/NeuralNetworksProject/Report/report.html) format.
 * Read the code in the [Jupyter notebook](https://nbviewer.jupyter.org/github/pitmonticone/PlantDiseaseClassification/blob/master/Notebooks/notebook.ipynb).
 * Run the code in the [Kaggle notebook](https://www.kaggle.com/inphyt2020/neuralnetworksproject).
 
